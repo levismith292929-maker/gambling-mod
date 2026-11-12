@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "sss",
+    "rrr",
+    "gwc"
+  ],
+  "key": {
+    "r": "slotmachine:slot_reel",
+    "g": "slotmachine:gear",
+    "w": "slotmachine:copper_wire",
+    "c": "minecraft:copper_nugget",
+    "s": "minecraft:yellow_concrete_slab"
+  },
+  "result": {
+    "id": "slotmachine:slottophalf",
+    "count": 1
+  }
+}
