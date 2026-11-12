@@ -39,13 +39,7 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property "version", project.version
 
-    // TEMPORARY DIAGNOSTIC: only enable gear.json; keep every other custom recipe disabled.
-    exclude "data/slotmachine/recipe/copper_wire.json"
-    exclude "data/slotmachine/recipe/slot_handle.json"
-    exclude "data/slotmachine/recipe/slot_machine.json"
-    exclude "data/slotmachine/recipe/slot_reel.json"
-    exclude "data/slotmachine/recipe/slotbottomhalf.json"
-    exclude "data/slotmachine/recipe/slottophalf.json"
+    // All custom recipes enabled for the next compatibility test.
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
