@@ -61,8 +61,13 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         resetDecoration();
     }
 
-    /** Puts the fixed, non-removable display items (reels + Spin button) in place. */
+    /** Fills unused machine slots with black panes and restores the fixed reel/spin displays. */
     private void resetDecoration() {
+        for (int slot = 0; slot < SIZE; slot++) {
+            if (slot != PAYMENT_SLOT) {
+                mainContainer.setItem(slot, new ItemStack(Items.BLACK_STAINED_GLASS_PANE));
+            }
+        }
         for (int reelSlot : REEL_SLOTS) {
             mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND_BLOCK));
         }
@@ -291,5 +296,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
             mainContainer.getItems().set(PAYMENT_SLOT, new ItemStack(Items.DIAMOND, Math.min(pending, 64)));
         }
         spinning = false;
+        resetDecoration();
     }
 }
