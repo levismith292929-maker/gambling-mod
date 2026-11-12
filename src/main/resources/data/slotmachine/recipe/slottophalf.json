@@ -11,7 +11,7 @@
     "g": "slotmachine:gear",
     "w": "slotmachine:copper_wire",
     "c": "minecraft:copper_nugget",
-    "s": "minecraft:yellow_concrete_slab"
+    "s": "minecraft:yellow_concrete"
   },
   "result": {
     "id": "slotmachine:slottophalf",
