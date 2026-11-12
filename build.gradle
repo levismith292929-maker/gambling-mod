@@ -22,7 +22,7 @@ dependencies {
     // 26.x is unobfuscated: no mappings line, and plain implementation (no mod*)
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc:fabric-api:${project.fabric_version}"
 }
 
 java {
@@ -40,6 +40,10 @@ tasks.withType(JavaCompile).configureEach {
 
 processResources {
     inputs.property "version", project.version
+
+    // TEMPORARY DIAGNOSTIC: exclude all custom recipes to test Safe Mode.
+    exclude "data/slotmachine/recipe/**"
+
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
