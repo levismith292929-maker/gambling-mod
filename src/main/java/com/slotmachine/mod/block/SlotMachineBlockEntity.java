@@ -239,6 +239,20 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         double x = pos.getX() + 0.5;
         double y = pos.getY() + 0.5;
         double z = pos.getZ() + 0.5;
+
+        // If the machine is broken during an animation, return the wager too.
+        if (spinning && wager > 0) {
+            int remaining = wager;
+            while (remaining > 0) {
+                int stackSize = Math.min(remaining, 64);
+                Containers.dropItemStack(level, x, y, z, new ItemStack(Items.DIAMOND, stackSize));
+                remaining -= stackSize;
+            }
+            spinning = false;
+            wager = 0;
+            spinningPlayerUuid = null;
+        }
+
         ItemStack payment = mainContainer.getItem(PAYMENT_SLOT);
         if (!payment.isEmpty()) {
             Containers.dropItemStack(level, x, y, z, payment.copy());
