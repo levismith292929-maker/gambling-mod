@@ -39,7 +39,11 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property "version", project.version
 
-    // All custom recipes enabled for the next compatibility test.
+    // Keep only the two recipes requested for this compatibility test.
+    exclude { details ->
+        details.path.startsWith("data/slotmachine/recipe/") &&
+            !(details.name in ["copper_wire.json", "gear.json"])
+    }
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
