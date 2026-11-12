@@ -11,7 +11,7 @@ base {
 }
 
 repositories {
-    // Add extra repositories here if a dependency needs one
+    // Fabric Loom supplies the Fabric Maven repository.
 }
 
 loom {
@@ -19,17 +19,14 @@ loom {
 }
 
 dependencies {
-    // 26.x is unobfuscated: no mappings line, and plain implementation (no mod*)
+    // Minecraft 26.3 / Java 25
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 java {
-    // Generate a separate -sources.jar alongside the playable mod JAR
     withSourcesJar()
-
-    // Minecraft 26.3 runs on Java 25
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
 }
