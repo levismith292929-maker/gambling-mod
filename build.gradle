@@ -39,10 +39,10 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property "version", project.version
 
-    // Test the slot machine recipe alongside the two recipes previously confirmed working.
+    // Keep only the two recipes confirmed to load successfully while isolating the slot machine recipe.
     exclude { details ->
         details.path.startsWith("data/slotmachine/recipe/") &&
-            !(details.name in ["gear.json", "copper_wire.json", "slot_machine.json"])
+            !(details.name in ["gear.json", "copper_wire.json"])
     }
 
     filesMatching("fabric.mod.json") {
