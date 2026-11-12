@@ -1,34 +1,40 @@
 package com.slotmachine.mod.block;
 
 import com.slotmachine.mod.SlotMachineMod;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import java.util.function.Function;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class ModBlocks {
 
-    // Hardness/resistance borrowed loosely from bedrock-tier for the test —
-    // tune these once the real block texture/behavior is finalized.
+    // Placeholder bedrock-looking block for the test. No tool is required to get the drop.
     public static final Block SLOT_MACHINE = registerBlock(
             "slot_machine",
-            new SlotMachineBlock(AbstractBlock.Settings.create()
-                    .strength(50.0f, 1200.0f)
-                    .requiresTool())
+            SlotMachineBlock::new,
+            BlockBehaviour.Properties.of().strength(3.0f, 1200.0f)
     );
 
     public static final Item SLOT_MACHINE_ITEM = registerBlockItem("slot_machine", SLOT_MACHINE);
 
-    private static Block registerBlock(String name, Block block) {
-        return Registry.register(Registries.BLOCK, Identifier.of(SlotMachineMod.MOD_ID, name), block);
+    private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> factory,
+                                       BlockBehaviour.Properties properties) {
+        ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        return Registry.register(BuiltInRegistries.BLOCK, key, factory.apply(properties.setId(key)));
     }
 
     private static Item registerBlockItem(String name, Block block) {
-        return Registry.register(Registries.ITEM, Identifier.of(SlotMachineMod.MOD_ID, name),
-                new BlockItem(block, new Item.Settings()));
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        return Registry.register(BuiltInRegistries.ITEM, key,
+                new BlockItem(block, new Item.Properties().setId(key).useBlockDescriptionPrefix()));
     }
 
     public static void registerModBlocks() {

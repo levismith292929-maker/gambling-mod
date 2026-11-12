@@ -1,116 +1,150 @@
 package com.slotmachine.mod.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * Placeholder/test block for the slot machine: two blocks tall, and breaking
- * EITHER half removes the whole thing with a single item drop — unlike
- * vanilla doors, which only cascade one direction (bottom -> top).
+ * Placeholder/test block for the slot machine: two blocks tall, and breaking EITHER half
+ * removes the whole thing with a single item drop.
  *
- * Right-click opens the Slot Machine GUI; shift-right-click opens the
- * separate Luck Slot GUI. Both delegate to the block entity attached to the
- * LOWER half, so clicking either half opens the same inventory.
+ * Right-click opens the Slot Machine GUI; shift-right-click (empty hand) opens the separate
+ * Luck Slot GUI. Both go through the block entity on the LOWER half.
  */
-public class SlotMachineBlock extends Block implements BlockEntityProvider {
+public class SlotMachineBlock extends Block implements EntityBlock {
 
-    public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final MapCodec<SlotMachineBlock> CODEC = simpleCodec(SlotMachineBlock::new);
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
-    public SlotMachineBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getStateManager().getDefaultState().with(HALF, DoubleBlockHalf.LOWER));
+    public SlotMachineBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        registerDefaultState(stateDefinition.any().setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected MapCodec<? extends Block> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HALF);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockPos pos = ctx.getBlockPos();
-        if (pos.getY() < ctx.getWorld().getTopY() - 1
-                && ctx.getWorld().getBlockState(pos.up()).canReplace(ctx)) {
-            return getDefaultState().with(HALF, DoubleBlockHalf.LOWER);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos pos = context.getClickedPos();
+        Level level = context.getLevel();
+        if (pos.getY() < level.getMaxY() && level.getBlockState(pos.above()).canBeReplaced(context)) {
+            return defaultBlockState();
         }
         return null;
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        world.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), Block.NOTIFY_ALL);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction.getAxis() == Direction.Axis.Y) {
-            DoubleBlockHalf half = state.get(HALF);
-            boolean neighborIsPartner = neighborState.isOf(this) && neighborState.get(HALF) != half;
-            if (!neighborIsPartner) {
-                return Blocks.AIR.getDefaultState();
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+                                     Direction directionToNeighbour, BlockPos neighbourPos,
+                                     BlockState neighbourState, RandomSource random) {
+        DoubleBlockHalf half = state.getValue(HALF);
+        // Only the vertical neighbour that should be our other half matters: the lower half
+        // looks up, the upper half looks down.
+        if (directionToNeighbour.getAxis() == Direction.Axis.Y
+                && (half == DoubleBlockHalf.LOWER) == (directionToNeighbour == Direction.UP)) {
+            boolean partnerPresent = neighbourState.is(this) && neighbourState.getValue(HALF) != half;
+            if (!partnerPresent) {
+                return Blocks.AIR.defaultBlockState();
             }
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (!world.isClient) {
-            DoubleBlockHalf half = state.get(HALF);
-            BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
-            BlockState otherState = world.getBlockState(otherPos);
-            if (otherState.isOf(this) && otherState.get(HALF) != half) {
-                // Remove the partner half directly (no loot run) so exactly
-                // one item still drops, from whichever half was actually harvested.
-                world.setBlockState(otherPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL | Block.SKIP_DROPS);
-                world.emitGameEvent(player, GameEvent.BLOCK_DESTROY, otherPos);
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide()) {
+            DoubleBlockHalf half = state.getValue(HALF);
+            BlockPos lowerPos = half == DoubleBlockHalf.LOWER ? pos : pos.below();
+            BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+
+            // Don't lose a prize/payment (or luck items) sitting inside the machine.
+            if (level.getBlockEntity(lowerPos) instanceof SlotMachineBlockEntity slotMachine) {
+                slotMachine.dropContents(level, lowerPos);
+            }
+
+            BlockState otherState = level.getBlockState(otherPos);
+            if (otherState.is(this) && otherState.getValue(HALF) != half) {
+                // Remove the partner half without drops so exactly one item drops,
+                // from whichever half was actually harvested.
+                level.setBlock(otherPos, Blocks.AIR.defaultBlockState(),
+                        Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
             }
         }
-        super.onBreak(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        // Only the lower half carries the inventory/GUI; the upper half just redirects to it.
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        // Only the lower half carries the inventory; the upper half just redirects to it.
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return new SlotMachineBlockEntity(pos, state);
         }
         return null;
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
-        BlockPos lowerPos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
-        BlockEntity blockEntity = world.getBlockEntity(lowerPos);
-        if (blockEntity instanceof SlotMachineBlockEntity slotMachine) {
-            if (player.isSneaking()) {
-                player.openHandledScreen(slotMachine.getLuckScreenHandlerFactory());
+        BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+        if (level.getBlockEntity(lowerPos) instanceof SlotMachineBlockEntity slotMachine) {
+            if (player.isShiftKeyDown()) {
+                player.openMenu(slotMachine.getLuckMenuProvider());
             } else {
-                player.openHandledScreen(slotMachine);
+                player.openMenu(slotMachine);
             }
         }
-        return ActionResult.CONSUME;
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+                                                                  BlockEntityType<T> type) {
+        if (level.isClientSide() || state.getValue(HALF) != DoubleBlockHalf.LOWER
+                || type != ModBlockEntities.SLOT_MACHINE_BLOCK_ENTITY) {
+            return null;
+        }
+        return (tickLevel, tickPos, tickState, blockEntity) -> {
+            if (blockEntity instanceof SlotMachineBlockEntity slotMachine) {
+                SlotMachineBlockEntity.tick(tickLevel, tickPos, tickState, slotMachine);
+            }
+        };
     }
 }
