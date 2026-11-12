@@ -9,13 +9,12 @@ Working:
 - All crafting recipes (gear, slot reel, slot handle, copper wire, top/bottom
   halves, final assembly)
 - The slot machine block: places two-tall, breaks fully from either half
-- Right-click opens the Slot Machine GUI (payment slot functional, reel/Spin
-  slots locked/decorative)
+- Right-click opens the Slot Machine GUI (payment slot, locked reel slots, Spin button)
 - Shift-right-click opens a separate Luck Slot GUI
 
+Also working (untested in-game): spin RNG, reel animation, payouts, heart removal, /op jackpot.
+
 Not implemented yet:
-- Spin button doesn't do anything — no RNG, no reel animation
-- No payout logic (multipliers, permanent heart removal, granting op)
 - No charm items or luck effects — the Luck Slot GUI is just a bare inventory
 - No custom "gambling" recipe-book category (recipes currently use vanilla's
   `misc` category since custom categories need client-side mixin work)

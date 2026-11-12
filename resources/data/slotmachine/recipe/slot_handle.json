@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "c",
+    "i",
+    "g"
+  ],
+  "key": {
+    "c": "minecraft:red_concrete",
+    "g": "slotmachine:gear",
+    "i": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "slotmachine:slot_handle",
+    "count": 1
+  }
+}
