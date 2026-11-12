@@ -10,7 +10,7 @@ import net.minecraft.world.item.Items;
  */
 public enum ReelSymbol {
     DIRT(Items.DIRT, 500),                // 5%
-    COPPER(Items.COPPER_BLOCK, 5999),     // 59.99%
+    COPPER(Items.COPPER_INGOT, 5999),     // 59.99%
     IRON(Items.IRON_BLOCK, 2000),         // 20%
     GOLD(Items.GOLD_BLOCK, 1000),         // 10%
     DIAMOND(Items.DIAMOND_BLOCK, 400),    // 4%
