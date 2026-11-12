@@ -26,6 +26,9 @@ dependencies {
 }
 
 java {
+    // Generate a separate -sources.jar alongside the playable mod JAR
+    withSourcesJar()
+
     // Minecraft 26.3 runs on Java 25
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
