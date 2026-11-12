@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "iIi",
+    "I I",
+    "iIi"
+  ],
+  "key": {
+    "i": "minecraft:iron_nugget",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "slotmachine:gear",
+    "count": 1
+  }
+}

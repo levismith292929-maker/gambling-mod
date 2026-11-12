@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "iii",
+    "gww",
+    "RRR"
+  ],
+  "key": {
+    "g": "slotmachine:gear",
+    "w": "slotmachine:copper_wire",
+    "i": "minecraft:iron_ingot",
+    "R": "minecraft:red_concrete"
+  },
+  "result": {
+    "id": "slotmachine:slotbottomhalf",
+    "count": 1
+  }
+}

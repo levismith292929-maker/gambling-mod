@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "slotmachine",
+  "version": "${version}",
+  "name": "Slot Machine",
+  "description": "A test gambling mod built around a craftable slot machine.",
+  "authors": [
+    "You"
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.slotmachine.mod.SlotMachineMod"
+    ],
+    "client": [
+      "com.slotmachine.mod.SlotMachineModClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

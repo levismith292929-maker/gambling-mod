@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "a",
+    "bc"
+  ],
+  "key": {
+    "a": "slotmachine:slottophalf",
+    "b": "slotmachine:slotbottomhalf",
+    "c": "slotmachine:slot_handle"
+  },
+  "result": {
+    "id": "slotmachine:slot_machine",
+    "count": 1
+  }
+}
