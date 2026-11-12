@@ -23,7 +23,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     // Minecraft 26.3 uses the plain implementation configuration in this project.
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc:fabric-api:fabric-api:${project.fabric_version}"
 }
 
 java {
@@ -39,10 +39,10 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property "version", project.version
 
-    // Keep only the four recipes in this testing stage.
+    // Keep the current test recipes, plus the confirmed working gear and wire recipes.
     exclude { details ->
         details.path.startsWith("data/slotmachine/recipe/") &&
-            !(details.name in ["slot_handle.json", "slot_reel.json", "slottophalf.json", "slotbottomhalf.json"])
+            !(details.name in ["slot_handle.json", "slot_reel.json", "slottophalf.json", "slotbottomhalf.json", "slot_machine.json", "gear.json", "copper_wire.json"])
     }
 
     filesMatching("fabric.mod.json") {
