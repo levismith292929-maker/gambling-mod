@@ -39,11 +39,6 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     inputs.property "version", project.version
 
-    // Keep the two known-good recipes and the corrected slot machine assembly recipe enabled.
-    exclude { details ->
-        details.path.startsWith("data/slotmachine/recipe/") &&
-            !(details.name in ["gear.json", "copper_wire.json", "slot_machine.json"])
-    }
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
