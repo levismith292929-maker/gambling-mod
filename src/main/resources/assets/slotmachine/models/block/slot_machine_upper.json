@@ -9,7 +9,7 @@
     {
       "from": [
         0,
-        0,
+        -0.01,
         4
       ],
       "to": [
@@ -20,7 +20,7 @@
       "shade": false,
       "faces": {
         "north": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
             0,
             0,
@@ -29,7 +29,7 @@
           ]
         },
         "south": {
-          "texture": "#grey",
+          "texture": "#panel",
           "uv": [
             0,
             0,
