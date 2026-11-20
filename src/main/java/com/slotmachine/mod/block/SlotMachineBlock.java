@@ -3,6 +3,7 @@ package com.slotmachine.mod.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -110,21 +111,29 @@ public class SlotMachineBlock extends Block implements EntityBlock {
         return null;
     }
 
+    private InteractionResult openMenu(BlockState state, Level level, BlockPos pos, Player player) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+        if (level.getBlockEntity(lowerPos) instanceof SlotMachineBlockEntity slotMachine) {
+            if (player.isShiftKeyDown()) player.openMenu(slotMachine.getLuckMenuProvider());
+            else player.openMenu(slotMachine);
+        }
+        return InteractionResult.CONSUME;
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
+        return openMenu(state, level, pos, player);
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                          Player player, InteractionHand hand, BlockHitResult hit) {
+        if (player.isShiftKeyDown()) {
+            return openMenu(state, level, pos, player);
         }
-        BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
-        if (level.getBlockEntity(lowerPos) instanceof SlotMachineBlockEntity slotMachine) {
-            if (player.isShiftKeyDown()) {
-                player.openMenu(slotMachine.getLuckMenuProvider());
-            } else {
-                player.openMenu(slotMachine);
-            }
-        }
-        return InteractionResult.CONSUME;
+        return InteractionResult.PASS;
     }
 
     @Override

@@ -8,5 +8,9 @@
   "item.slotmachine.slotbottomhalf": "Slot Machine - Bottom Half",
   "block.slotmachine.slot_machine": "Slot Machine",
   "item.slotmachine.clover": "Clover",
-  "item.slotmachine.empty_charm": "Empty Luck Charm"
+  "item.slotmachine.empty_charm": "Empty Luck Charm",
+  "item.slotmachine.stone_luck_charm": "Stone Luck Charm",
+  "item.slotmachine.iron_luck_charm": "Iron Luck Charm",
+  "item.slotmachine.gold_luck_charm": "Gold Luck Charm",
+  "item.slotmachine.diamond_luck_charm": "Diamond Luck Charm"
 }

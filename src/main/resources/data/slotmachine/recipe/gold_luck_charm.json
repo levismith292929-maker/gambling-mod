@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": true,
+  "category": "misc",
+  "pattern": [
+    "mcm",
+    "cCc",
+    "mcm"
+  ],
+  "key": {
+    "C": [
+      "slotmachine:iron_luck_charm"
+    ],
+    "c": [
+      "slotmachine:clover"
+    ],
+    "m": [
+      "minecraft:raw_gold_block"
+    ]
+  },
+  "result": {
+    "id": "slotmachine:gold_luck_charm",
+    "count": 1
+  }
+}

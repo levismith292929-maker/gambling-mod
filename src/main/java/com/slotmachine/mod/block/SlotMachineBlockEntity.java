@@ -1,6 +1,7 @@
 package com.slotmachine.mod.block;
 
 import com.slotmachine.mod.ModSounds;
+import com.slotmachine.mod.item.ModItems;
 import com.slotmachine.mod.menu.SlotMachineMenu;
 import com.slotmachine.mod.menu.LuckSlotMenu;
 import java.util.UUID;
@@ -111,6 +112,10 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
         };
     }
 
+    private int getLuckCharmTier() {
+        return ModItems.getLuckCharmTier(luckContainer.getItem(13));
+    }
+
     public void trySpin(Player player) {
         if (spinning) {
             return;
@@ -153,7 +158,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
                 continue;
             }
             if (blockEntity.spinTicks >= (i + 1) * TICKS_PER_REEL) {
-                ReelSymbol result = ReelSymbol.roll(level.getRandom());
+                ReelSymbol result = ReelSymbol.roll(level.getRandom(), blockEntity.getLuckCharmTier());
                 blockEntity.reelResults[i] = result;
                 blockEntity.mainContainer.setItem(REEL_SLOTS[i], named(new ItemStack(result.item), ""));
                 float pitch = 0.95f + level.getRandom().nextFloat() * 0.10f;

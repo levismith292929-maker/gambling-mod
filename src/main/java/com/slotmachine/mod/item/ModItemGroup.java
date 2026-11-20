@@ -25,6 +25,10 @@ public class ModItemGroup {
                 output.accept(ModBlocks.SLOT_MACHINE_ITEM);
                 output.accept(ModItems.CLOVER);
                 output.accept(ModItems.EMPTY_CHARM);
+                output.accept(ModItems.STONE_LUCK_CHARM);
+                output.accept(ModItems.IRON_LUCK_CHARM);
+                output.accept(ModItems.GOLD_LUCK_CHARM);
+                output.accept(ModItems.DIAMOND_LUCK_CHARM);
             }).build();
     public static void registerItemGroups() {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, GAMBLING_TAB_KEY, GAMBLING_TAB);

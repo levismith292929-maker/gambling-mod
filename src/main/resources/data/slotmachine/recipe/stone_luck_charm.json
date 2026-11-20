@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": true,
+  "category": "misc",
+  "pattern": [
+    "mcm",
+    "cCc",
+    "mcm"
+  ],
+  "key": {
+    "C": ["slotmachine:empty_charm"],
+    "c": ["slotmachine:clover"],
+    "m": ["minecraft:cobblestone"]
+  },
+  "result": {"id": "slotmachine:stone_luck_charm", "count": 1}
+}
