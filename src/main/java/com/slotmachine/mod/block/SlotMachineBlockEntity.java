@@ -214,20 +214,22 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
             }
             return;
         }
-        int inSlot = Math.min(amount, 64);
+
         ItemStack existingPrize = mainContainer.getItem(PRIZE_SLOT);
-        int space = existingPrize.isEmpty() ? 64 : (existingPrize.is(Items.DIAMOND) ? 64 - existingPrize.getCount() : 0);
-        int inSlot = Math.min(amount, space);
-        if (inSlot > 0) {
+        int space = existingPrize.isEmpty() ? 64
+                : (existingPrize.is(Items.DIAMOND) ? 64 - existingPrize.getCount() : 0);
+        int stored = Math.min(amount, space);
+        if (stored > 0) {
             if (existingPrize.isEmpty()) {
-                mainContainer.setItem(PRIZE_SLOT, new ItemStack(Items.DIAMOND, inSlot));
+                mainContainer.setItem(PRIZE_SLOT, new ItemStack(Items.DIAMOND, stored));
             } else {
                 ItemStack updatedPrize = existingPrize.copy();
-                updatedPrize.grow(inSlot);
+                updatedPrize.grow(stored);
                 mainContainer.setItem(PRIZE_SLOT, updatedPrize);
             }
         }
-        int overflow = amount - inSlot;
+
+        int overflow = amount - stored;
         while (overflow > 0) {
             int stack = Math.min(overflow, 64);
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
