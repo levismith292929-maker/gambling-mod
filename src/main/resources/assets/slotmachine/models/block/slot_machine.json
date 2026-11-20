@@ -2,6 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "panel": "slotmachine:block/slot_machine_lower",
+    "grey": "minecraft:block/gray_concrete",
     "particle": "slotmachine:block/slot_machine_lower"
   },
   "elements": [
@@ -28,7 +29,7 @@
           ]
         },
         "south": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
             0,
             0,
@@ -37,38 +38,38 @@
           ]
         },
         "west": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
             0,
-            0.5,
-            0.5,
-            15.5
+            0,
+            16,
+            16
           ]
         },
         "east": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
-            15.5,
-            0.5,
+            0,
+            0,
             16,
-            15.5
+            16
           ]
         },
         "up": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
-            0.5,
             0,
-            15.5,
-            0.5
+            0,
+            16,
+            16
           ]
         },
         "down": {
-          "texture": "#panel",
+          "texture": "#grey",
           "uv": [
-            0.5,
-            15.5,
-            15.5,
+            0,
+            0,
+            16,
             16
           ]
         }
