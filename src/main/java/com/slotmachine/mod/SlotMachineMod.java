@@ -24,7 +24,7 @@ public class SlotMachineMod implements ModInitializer {
         ModMenus.registerMenus();
         ModItemGroup.registerItemGroups();
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            if (Blocks.SHORT_GRASS.getLootTable().orElseThrow().equals(key)) {
+            if (Blocks.TALL_GRASS.getLootTable().orElseThrow().equals(key)) {
                 LootPool.Builder cloverPool = LootPool.lootPool()
                         .add(LootItem.lootTableItem(ModItems.CLOVER))
                         .when(LootItemRandomChanceCondition.randomChance(0.05f));
