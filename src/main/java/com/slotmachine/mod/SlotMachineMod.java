@@ -18,6 +18,7 @@ public class SlotMachineMod implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Slot Machine mod loaded!");
+        ModSounds.registerSounds();
         ModItems.registerModItems();
         ModBlocks.registerModBlocks();
         ModBlockEntities.registerBlockEntities();

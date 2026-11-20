@@ -1,5 +1,6 @@
 package com.slotmachine.mod.block;
 
+import com.slotmachine.mod.ModSounds;
 import com.slotmachine.mod.menu.SlotMachineMenu;
 import com.slotmachine.mod.menu.LuckSlotMenu;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -16,7 +18,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -40,19 +41,18 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider {
 
     public static final int SIZE = 27;
-    public static final int PAYMENT_SLOT = 10; // row 2, col 2 (0-indexed) in the GUI image
+    public static final int PAYMENT_SLOT = 10;
     public static final int[] REEL_SLOTS = {12, 13, 14};
     public static final int SPIN_SLOT = 16;
 
-    private static final int TICKS_PER_REEL = 40; // 2 seconds
-    private static final int TICKS_PER_FRAME = 4; // how fast unrevealed reels cycle symbols
+    private static final int TICKS_PER_REEL = 40;
+    private static final int TICKS_PER_FRAME = 4;
 
     private final SimpleBlockContainer mainContainer =
             new SimpleBlockContainer(SIZE, this::setChanged, player -> Container.stillValidBlockEntity(this, player));
     private final SimpleBlockContainer luckContainer =
             new SimpleBlockContainer(SIZE, this::setChanged, player -> Container.stillValidBlockEntity(this, player));
 
-    // Spin state. A spin in progress is abandoned on reload (the wager is refunded, see loadAdditional).
     private boolean spinning = false;
     private int spinTicks = 0;
     private int wager = 0;
@@ -64,7 +64,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         resetDecoration();
     }
 
-    /** Puts the fixed, non-removable display items (reels + Spin button) in place. */
     private void resetDecoration() {
         for (int slot = 0; slot < SIZE; slot++) {
             if (slot != PAYMENT_SLOT && slot != SPIN_SLOT
@@ -78,8 +77,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD));
     }
 
-    // ---- Menus ----------------------------------------------------------------------------
-
     @Override
     public Component getDisplayName() {
         return Component.literal("Slot Machine");
@@ -90,7 +87,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         return new SlotMachineMenu(containerId, inventory, mainContainer, this);
     }
 
-    /** Separate provider for the shift-right-click "Luck Slot" GUI - plain, unrestricted 27 slots. */
     public MenuProvider getLuckMenuProvider() {
         return new MenuProvider() {
             @Override
@@ -105,9 +101,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         };
     }
 
-    // ---- Spinning -------------------------------------------------------------------------
-
-    /** Called by the menu when the player clicks the Spin slot. */
     public void trySpin(Player player) {
         if (spinning) {
             return;
@@ -126,15 +119,22 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         for (int i = 0; i < reelResults.length; i++) {
             reelResults[i] = null;
         }
+        if (level != null && !level.isClientSide()) {
+            level.playSound(null, worldPosition, ModSounds.SPIN_START, SoundSource.BLOCKS, 1.0f, 1.0f);
+        }
         setChanged();
     }
 
-    /** Registered as this block entity's ticker - see SlotMachineBlock#getTicker. */
     public static void tick(Level level, BlockPos pos, BlockState state, SlotMachineBlockEntity blockEntity) {
         if (level.isClientSide() || !blockEntity.spinning) {
             return;
         }
         blockEntity.spinTicks++;
+
+        if (blockEntity.spinTicks % TICKS_PER_FRAME == 0) {
+            float pitch = 0.92f + level.getRandom().nextFloat() * 0.16f;
+            level.playSound(null, pos, ModSounds.REEL_TICK, SoundSource.BLOCKS, 0.55f, pitch);
+        }
 
         ReelSymbol[] symbols = ReelSymbol.values();
         boolean allRevealed = true;
@@ -143,13 +143,13 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
                 continue;
             }
             if (blockEntity.spinTicks >= (i + 1) * TICKS_PER_REEL) {
-                // This reel stops: roll its final symbol.
                 ReelSymbol result = ReelSymbol.roll(level.getRandom());
                 blockEntity.reelResults[i] = result;
                 blockEntity.mainContainer.setItem(REEL_SLOTS[i], new ItemStack(result.item));
+                float pitch = 0.96f + level.getRandom().nextFloat() * 0.08f;
+                level.playSound(null, pos, ModSounds.REEL_STOP, SoundSource.BLOCKS, 0.9f, pitch);
             } else {
                 allRevealed = false;
-                // Still spinning: cycle through the symbols in order (dirt > copper > ... > command block).
                 if (blockEntity.spinTicks % TICKS_PER_FRAME == 0) {
                     int frame = blockEntity.spinTicks / TICKS_PER_FRAME + i;
                     ReelSymbol shown = symbols[frame % symbols.length];
@@ -196,7 +196,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         if (maxHealth == null) {
             return;
         }
-        // One heart = 2 health. Floor at 1 heart so repeated losses can't drive max health to 0.
         double newMax = Math.max(2.0, maxHealth.getBaseValue() - 2.0);
         maxHealth.setBaseValue(newMax);
         if (player.getHealth() > newMax) {
@@ -214,7 +213,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         }
         int inSlot = Math.min(amount, 64);
         mainContainer.setItem(PAYMENT_SLOT, new ItemStack(Items.DIAMOND, inSlot));
-        // A single slot holds at most 64, so drop any overflow next to the machine.
         int overflow = amount - inSlot;
         while (overflow > 0) {
             int stack = Math.min(overflow, 64);
@@ -243,13 +241,11 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-    /** Drops the payment/prize slot and the Luck Slot contents (called when the machine is broken). */
     public void dropContents(Level level, BlockPos pos) {
         double x = pos.getX() + 0.5;
         double y = pos.getY() + 0.5;
         double z = pos.getZ() + 0.5;
 
-        // If the machine is broken during an animation, return the wager too.
         if (spinning && wager > 0) {
             int remaining = wager;
             while (remaining > 0) {
@@ -276,14 +272,11 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-    // ---- Saving ---------------------------------------------------------------------------
-
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         ContainerHelper.saveAllItems(output.child("MainInventory"), mainContainer.getItems());
         ContainerHelper.saveAllItems(output.child("LuckInventory"), luckContainer.getItems());
-        // If the world is saved mid-spin, remember the wager so it can be refunded on load.
         output.putInt("PendingWager", spinning ? wager : 0);
     }
 
