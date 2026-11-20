@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 /** Shows black glass in empty Luck Slot spaces without occupying the real inventory slots. */
 public class LuckSlotMenu extends ChestMenu {
     public LuckSlotMenu(int containerId, Inventory playerInventory, Container container) {
@@ -19,7 +20,7 @@ public class LuckSlotMenu extends ChestMenu {
         return super.addSlot(slot);
     }
     private static class BackgroundSlot extends Slot {
-        private static final ItemStack BACKGROUND = new ItemStack(Items.BLACK_STAINED_GLASS_PANE);
+        private static final ItemStack BACKGROUND = new ItemStack(Blocks.BLACK_STAINED_GLASS_PANE.asItem());
         BackgroundSlot(Container container, int slot, int x, int y) { super(container, slot, x, y); }
         @Override public ItemStack getItem() {
             ItemStack actual = super.getItem();
