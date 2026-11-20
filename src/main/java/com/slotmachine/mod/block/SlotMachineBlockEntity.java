@@ -7,6 +7,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -71,13 +72,19 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
         for (int slot = 0; slot < SIZE; slot++) {
             if (slot != PAYMENT_SLOT && slot != PRIZE_SLOT && slot != SPIN_SLOT
                     && slot != REEL_SLOTS[0] && slot != REEL_SLOTS[1] && slot != REEL_SLOTS[2]) {
-                mainContainer.setItem(slot, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("minecraft", "black_stained_glass_pane"))));
+                mainContainer.setItem(slot, named(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("minecraft", "black_stained_glass_pane"))), ""));
             }
         }
         for (int reelSlot : REEL_SLOTS) {
-            mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND));
+            mainContainer.setItem(reelSlot, named(new ItemStack(Items.DIAMOND), ""));
         }
-        mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD));
+        mainContainer.setItem(SPIN_SLOT, named(new ItemStack(Items.EMERALD), "Spin to Win"));
+    }
+
+
+    private static ItemStack named(ItemStack stack, String name) {
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        return stack;
     }
 
     @Override
@@ -148,7 +155,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
             if (blockEntity.spinTicks >= (i + 1) * TICKS_PER_REEL) {
                 ReelSymbol result = ReelSymbol.roll(level.getRandom());
                 blockEntity.reelResults[i] = result;
-                blockEntity.mainContainer.setItem(REEL_SLOTS[i], new ItemStack(result.item));
+                blockEntity.mainContainer.setItem(REEL_SLOTS[i], named(new ItemStack(result.item), ""));
                 float pitch = 0.95f + level.getRandom().nextFloat() * 0.10f;
                 level.playSound(null, pos, ModSounds.REEL_STOP, SoundSource.BLOCKS, 1.25f, pitch);
             } else {
@@ -156,7 +163,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
                 if (blockEntity.spinTicks % TICKS_PER_FRAME == 0) {
                     int frame = blockEntity.spinTicks / TICKS_PER_FRAME + i;
                     ReelSymbol shown = symbols[frame % symbols.length];
-                    blockEntity.mainContainer.setItem(REEL_SLOTS[i], new ItemStack(shown.item));
+                    blockEntity.mainContainer.setItem(REEL_SLOTS[i], named(new ItemStack(shown.item), ""));
                 }
             }
         }
