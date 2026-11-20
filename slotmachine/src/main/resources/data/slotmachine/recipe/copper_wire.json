@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ccc"
+  ],
+  "key": {
+    "c": "minecraft:copper_nugget"
+  },
+  "result": {
+    "id": "slotmachine:copper_wire",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "itemGroup.slotmachine.slot_machine_group": "Gambling",
+  "item.slotmachine.gear": "Gear",
+  "item.slotmachine.slot_reel": "Slot Reel",
+  "item.slotmachine.slot_handle": "Slot Handle",
+  "item.slotmachine.copper_wire": "Copper Wire",
+  "item.slotmachine.slottophalf": "Slot Machine - Top Half",
+  "item.slotmachine.slotbottomhalf": "Slot Machine - Bottom Half",
+  "block.slotmachine.slot_machine": "Slot Machine"
+}

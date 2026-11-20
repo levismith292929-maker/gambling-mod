@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "pp",
+    "pg"
+  ],
+  "key": {
+    "p": "minecraft:paper",
+    "g": "slotmachine:gear"
+  },
+  "result": {
+    "id": "slotmachine:slot_reel",
+    "count": 1
+  }
+}

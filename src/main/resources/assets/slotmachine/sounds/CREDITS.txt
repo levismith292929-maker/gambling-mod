@@ -1,0 +1,5 @@
+Sound effects used by Slot Machine:
+- spin_start.ogg, reel_tick.ogg, reel_stop.ogg: derived from Kenney's Interface Sounds pack by Kenney.
+- Original source: https://kenney.nl/assets/interface-sounds
+- License: CC0 1.0 (public domain dedication). Attribution is not required; credit is provided here.
+- Source files were obtained from the CC0-licensed Free Sound Effects catalog: https://github.com/hipdiscovery/Free-Sound-Effects
