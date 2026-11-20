@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "panel": "slotmachine:block/slot_machine_block",
-    "particle": "slotmachine:block/slot_machine_block"
+    "panel": "slotmachine:block/slot_machine_upper",
+    "particle": "slotmachine:block/slot_machine_upper"
   },
   "elements": [
     {
@@ -23,8 +23,8 @@
           "uv": [
             0,
             0,
-            30,
-            32
+            16,
+            16
           ]
         },
         "south": {
@@ -32,8 +32,8 @@
           "uv": [
             0,
             0,
-            30,
-            32
+            16,
+            16
           ]
         },
         "east": {
@@ -41,8 +41,8 @@
           "uv": [
             0,
             0,
-            30,
-            32
+            16,
+            16
           ]
         },
         "west": {
@@ -50,8 +50,8 @@
           "uv": [
             0,
             0,
-            30,
-            32
+            16,
+            16
           ]
         },
         "up": {
@@ -59,17 +59,17 @@
           "uv": [
             0,
             0,
-            30,
-            4
+            16,
+            16
           ]
         },
         "down": {
           "texture": "#panel",
           "uv": [
             0,
-            28,
-            30,
-            32
+            0,
+            16,
+            16
           ]
         }
       }
