@@ -1,6 +1,7 @@
 package com.slotmachine.mod.block;
 
 import com.slotmachine.mod.menu.SlotMachineMenu;
+import com.slotmachine.mod.menu.LuckSlotMenu;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -63,10 +64,20 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
 
     /** Puts the fixed, non-removable display items (reels + Spin button) in place. */
     private void resetDecoration() {
-        for (int reelSlot : REEL_SLOTS) {
-            mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND_BLOCK));
+        for (int slot = 0; slot < SIZE; slot++) {
+            if (slot != PAYMENT_SLOT && slot != SPIN_SLOT
+                    && slot != REEL_SLOTS[0] && slot != REEL_SLOTS[1] && slot != REEL_SLOTS[2]) {
+                mainContainer.setItem(slot, new ItemStack(Items.BLACK_STAINED_GLASS_PANE));
+            }
         }
-        mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD_BLOCK));
+        for (int reelSlot : REEL_SLOTS) {
+            if (mainContainer.getItem(reelSlot).isEmpty()) {
+                mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND));
+            }
+        }
+        if (mainContainer.getItem(SPIN_SLOT).isEmpty()) {
+            mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD));
+        }
     }
 
     // ---- Menus ----------------------------------------------------------------------------
@@ -91,7 +102,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
 
             @Override
             public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                return ChestMenu.threeRows(containerId, inventory, luckContainer);
+                return new LuckSlotMenu(containerId, inventory, luckContainer);
             }
         };
     }
@@ -291,5 +302,6 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
             mainContainer.getItems().set(PAYMENT_SLOT, new ItemStack(Items.DIAMOND, Math.min(pending, 64)));
         }
         spinning = false;
+        resetDecoration();
     }
 }

@@ -1,41 +1,27 @@
 package com.slotmachine.mod.block;
-
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-
-/**
- * The 7 possible reel outcomes, in spin order. Weights are out of 10000 so the 0.01%
- * command block chance can be a whole number (1/10000).
- */
+/** The weighted outcomes shown on the reels. */
 public enum ReelSymbol {
-    DIRT(Items.DIRT, 500),                // 5%
-    COPPER(Items.COPPER_INGOT, 5999),     // 59.99%
-    IRON(Items.IRON_BLOCK, 2000),         // 20%
-    GOLD(Items.GOLD_BLOCK, 1000),         // 10%
-    DIAMOND(Items.DIAMOND_BLOCK, 400),    // 4%
-    EMERALD(Items.EMERALD_BLOCK, 100),    // 1%
-    COMMAND_BLOCK(Items.COMMAND_BLOCK, 1); // 0.01%
-
+    DIRT(Items.DIRT, 500),
+    COPPER(Items.COPPER_INGOT, 5999),
+    IRON(Items.IRON_INGOT, 2000),
+    GOLD(Items.GOLD_INGOT, 1000),
+    DIAMOND(Items.DIAMOND, 400),
+    EMERALD(Items.EMERALD, 100),
+    COMMAND_BLOCK(Items.COMMAND_BLOCK, 1);
     private static final int TOTAL_WEIGHT = 10000;
-
     public final Item item;
     public final int weight;
-
-    ReelSymbol(Item item, int weight) {
-        this.item = item;
-        this.weight = weight;
-    }
-
+    ReelSymbol(Item item, int weight) { this.item = item; this.weight = weight; }
     public static ReelSymbol roll(RandomSource random) {
         int roll = random.nextInt(TOTAL_WEIGHT);
         int cumulative = 0;
         for (ReelSymbol symbol : values()) {
             cumulative += symbol.weight;
-            if (roll < cumulative) {
-                return symbol;
-            }
+            if (roll < cumulative) return symbol;
         }
-        return COPPER; // unreachable: the weights sum to TOTAL_WEIGHT
+        return COPPER;
     }
 }
