@@ -132,7 +132,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         blockEntity.spinTicks++;
 
         if (blockEntity.spinTicks % TICKS_PER_FRAME == 0) {
-            float pitch = 0.92f + level.getRandom().nextFloat() * 0.16f;
+            float pitch = 0.95f + level.getRandom().nextFloat() * 0.10f;
             level.playSound(null, pos, ModSounds.REEL_TICK, SoundSource.BLOCKS, 0.55f, pitch);
         }
 
@@ -146,8 +146,8 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
                 ReelSymbol result = ReelSymbol.roll(level.getRandom());
                 blockEntity.reelResults[i] = result;
                 blockEntity.mainContainer.setItem(REEL_SLOTS[i], new ItemStack(result.item));
-                float pitch = 0.96f + level.getRandom().nextFloat() * 0.08f;
-                level.playSound(null, pos, ModSounds.REEL_STOP, SoundSource.BLOCKS, 0.9f, pitch);
+                float pitch = 0.95f + level.getRandom().nextFloat() * 0.10f;
+                level.playSound(null, pos, ModSounds.REEL_STOP, SoundSource.BLOCKS, 1.25f, pitch);
             } else {
                 allRevealed = false;
                 if (blockEntity.spinTicks % TICKS_PER_FRAME == 0) {
