@@ -20,7 +20,8 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -68,7 +69,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
         for (int slot = 0; slot < SIZE; slot++) {
             if (slot != PAYMENT_SLOT && slot != SPIN_SLOT
                     && slot != REEL_SLOTS[0] && slot != REEL_SLOTS[1] && slot != REEL_SLOTS[2]) {
-                mainContainer.setItem(slot, new ItemStack(Blocks.BLACK_STAINED_GLASS_PANE.asItem()));
+                mainContainer.setItem(slot, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("minecraft", "black_stained_glass_pane"))));
             }
         }
         for (int reelSlot : REEL_SLOTS) {
