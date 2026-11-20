@@ -25,9 +25,12 @@ public class LuckSlotMenu extends ChestMenu {
         BackgroundSlot(Container container, int slot, int x, int y) { super(container, slot, x, y); }
         @Override public ItemStack getItem() {
             ItemStack actual = super.getItem();
-            return actual.isEmpty() ? BACKGROUND : actual;
+            return actual.isEmpty() ? BACKGROUND.copy() : actual;
         }
         @Override public boolean hasItem() { return !super.getItem().isEmpty(); }
+        @Override public boolean mayPickup(net.minecraft.world.entity.player.Player player) {
+            return !super.getItem().isEmpty() && super.mayPickup(player);
+        }
         @Override public boolean mayPlace(ItemStack stack) { return true; }
     }
 }
