@@ -15,7 +15,7 @@ public class LuckSlotMenu extends ChestMenu {
     }
     @Override
     protected Slot addSlot(Slot slot) {
-        if (slot.container instanceof SimpleBlockContainer) {
+        if (slot.container instanceof SimpleBlockContainer && slot.getContainerSlot() != 13) {
             slot = new BackgroundSlot(slot.container, slot.getContainerSlot(), slot.x, slot.y);
         }
         return super.addSlot(slot);
