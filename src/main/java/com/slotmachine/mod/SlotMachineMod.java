@@ -2,6 +2,7 @@ package com.slotmachine.mod;
 
 import com.slotmachine.mod.block.ModBlockEntities;
 import com.slotmachine.mod.block.ModBlocks;
+import com.slotmachine.mod.command.ModCommands;
 import com.slotmachine.mod.item.ModItemGroup;
 import com.slotmachine.mod.item.ModItems;
 import com.slotmachine.mod.menu.ModMenus;
@@ -22,5 +23,6 @@ public class SlotMachineMod implements ModInitializer {
         ModBlockEntities.registerBlockEntities();
         ModMenus.registerMenus();
         ModItemGroup.registerItemGroups();
+        ModCommands.register();
     }
 }
