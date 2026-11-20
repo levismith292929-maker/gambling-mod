@@ -71,13 +71,9 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
             }
         }
         for (int reelSlot : REEL_SLOTS) {
-            if (mainContainer.getItem(reelSlot).isEmpty()) {
-                mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND));
-            }
+            mainContainer.setItem(reelSlot, new ItemStack(Items.DIAMOND));
         }
-        if (mainContainer.getItem(SPIN_SLOT).isEmpty()) {
-            mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD));
-        }
+        mainContainer.setItem(SPIN_SLOT, new ItemStack(Items.EMERALD));
     }
 
     // ---- Menus ----------------------------------------------------------------------------
