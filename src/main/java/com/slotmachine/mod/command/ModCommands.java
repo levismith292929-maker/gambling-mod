@@ -57,7 +57,7 @@ public final class ModCommands {
                                                                     PENDING_RIGS.put(player.getUUID(),
                                                                             new PendingRig(amount, first, second, third));
                                                                     context.getSource().sendSuccess(
-                                                                            () -> Component.literal("Rigged " + player.getGameProfile().name()
+                                                                            () -> Component.literal("Rigged " + player.getName().getString()
                                                                                     + "'s next " + amount + " spin(s) to "
                                                                                     + first.name().toLowerCase(Locale.ROOT) + " "
                                                                                     + second.name().toLowerCase(Locale.ROOT) + " "
