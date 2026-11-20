@@ -130,10 +130,9 @@ public class SlotMachineBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
-        if (player.isShiftKeyDown()) {
-            return openMenu(state, level, pos, player);
-        }
-        return InteractionResult.PASS;
+        // Handle clicks with an item in hand too: ordinary right-click opens the
+        // gambling menu, while shift-right-click opens the luck charm menu.
+        return openMenu(state, level, pos, player);
     }
 
     @Override
