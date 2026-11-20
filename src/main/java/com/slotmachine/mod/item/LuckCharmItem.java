@@ -1,10 +1,11 @@
 package com.slotmachine.mod.item;
 
-import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 
 public class LuckCharmItem extends Item {
@@ -20,8 +21,8 @@ public class LuckCharmItem extends Item {
     public int getTier() { return tier; }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
-                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("+" + displayedLuck + "% Luck").withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.literal("+" + displayedLuck + "% Luck").withStyle(ChatFormatting.GRAY));
     }
 }
