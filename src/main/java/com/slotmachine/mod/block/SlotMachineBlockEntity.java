@@ -188,10 +188,10 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider,
             switch (symbol) {
                 case DIRT -> removeHeart(player);
                 case COPPER -> awardDiamonds(level, pos, player, wager / 2);
-                case IRON -> awardDiamonds(level, pos, player, wager);
-                case GOLD -> awardDiamonds(level, pos, player, wager * 3 / 2);
-                case DIAMOND -> awardDiamonds(level, pos, player, wager * 5 / 2);
-                case EMERALD -> awardDiamonds(level, pos, player, wager * 5);
+                case IRON -> awardDiamonds(level, pos, player, wager * 3 / 2);
+                case GOLD -> awardDiamonds(level, pos, player, wager * 3);
+                case DIAMOND -> awardDiamonds(level, pos, player, wager * 5);
+                case EMERALD -> awardDiamonds(level, pos, player, wager * 10);
                 case COMMAND_BLOCK -> grantOp(level, player);
             }
         } else if (player != null) {
