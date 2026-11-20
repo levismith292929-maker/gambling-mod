@@ -5,11 +5,13 @@ import com.slotmachine.mod.menu.SlotMachineMenu;
 import com.slotmachine.mod.menu.LuckSlotMenu;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -38,10 +40,11 @@ import net.minecraft.world.level.storage.ValueOutput;
  * 2 seconds, and on an all-match win applies the payout (or the dirt/command-block
  * special effects) - see trySpin / tick / resolveSpin.
  */
-public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider {
+public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider, WorldlyContainer {
 
-    public static final int SIZE = 27;
-    public static final int PAYMENT_SLOT = 10;
+    public static final int SIZE = 45;
+    public static final int PAYMENT_SLOT = 30;
+    public static final int PRIZE_SLOT = 32;
     public static final int[] REEL_SLOTS = {12, 13, 14};
     public static final int SPIN_SLOT = 16;
 
@@ -66,7 +69,7 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
 
     private void resetDecoration() {
         for (int slot = 0; slot < SIZE; slot++) {
-            if (slot != PAYMENT_SLOT && slot != SPIN_SLOT
+            if (slot != PAYMENT_SLOT && slot != PRIZE_SLOT && slot != SPIN_SLOT
                     && slot != REEL_SLOTS[0] && slot != REEL_SLOTS[1] && slot != REEL_SLOTS[2]) {
                 mainContainer.setItem(slot, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("minecraft", "black_stained_glass_pane"))));
             }
@@ -212,7 +215,18 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
             return;
         }
         int inSlot = Math.min(amount, 64);
-        mainContainer.setItem(PAYMENT_SLOT, new ItemStack(Items.DIAMOND, inSlot));
+        ItemStack existingPrize = mainContainer.getItem(PRIZE_SLOT);
+        int space = existingPrize.isEmpty() ? 64 : (existingPrize.is(Items.DIAMOND) ? 64 - existingPrize.getCount() : 0);
+        int inSlot = Math.min(amount, space);
+        if (inSlot > 0) {
+            if (existingPrize.isEmpty()) {
+                mainContainer.setItem(PRIZE_SLOT, new ItemStack(Items.DIAMOND, inSlot));
+            } else {
+                ItemStack updatedPrize = existingPrize.copy();
+                updatedPrize.grow(inSlot);
+                mainContainer.setItem(PRIZE_SLOT, updatedPrize);
+            }
+        }
         int overflow = amount - inSlot;
         while (overflow > 0) {
             int stack = Math.min(overflow, 64);
@@ -270,6 +284,78 @@ public class SlotMachineBlockEntity extends BlockEntity implements MenuProvider 
                 luckContainer.setItem(i, ItemStack.EMPTY);
             }
         }
+    }
+
+
+    // Hoppers and other sided automation can only feed diamonds into the payment slot.
+    // The bottom face exposes only the prize slot for extraction.
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return side == Direction.DOWN ? new int[]{PRIZE_SLOT} : new int[]{PAYMENT_SLOT};
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction side) {
+        return slot == PAYMENT_SLOT && stack.is(Items.DIAMOND) && !spinning;
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
+        return side == Direction.DOWN && slot == PRIZE_SLOT && stack.is(Items.DIAMOND);
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return slot == PAYMENT_SLOT && stack.is(Items.DIAMOND) && !spinning;
+    }
+
+    // WorldlyContainer exposes the machine's automation inventory, not its decorative GUI slots.
+    @Override
+    public int getContainerSize() {
+        return mainContainer.getContainerSize();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return mainContainer.getItem(PAYMENT_SLOT).isEmpty() && mainContainer.getItem(PRIZE_SLOT).isEmpty();
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return slot == PAYMENT_SLOT || slot == PRIZE_SLOT ? mainContainer.getItem(slot) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        return slot == PRIZE_SLOT ? mainContainer.removeItem(slot, amount) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        return slot == PRIZE_SLOT ? mainContainer.removeItemNoUpdate(slot) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        if (slot == PAYMENT_SLOT && (stack.isEmpty() || stack.is(Items.DIAMOND))) {
+            mainContainer.setItem(slot, stack);
+        }
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
+    public void clearContent() {
+        mainContainer.setItem(PAYMENT_SLOT, ItemStack.EMPTY);
+        mainContainer.setItem(PRIZE_SLOT, ItemStack.EMPTY);
     }
 
     @Override

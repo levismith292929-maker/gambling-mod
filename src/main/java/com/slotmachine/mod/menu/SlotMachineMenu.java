@@ -9,37 +9,35 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
-/**
- * 3x9 "Slot Machine" GUI built on vanilla's ChestMenu. Every slot of the machine's own
- * container except the payment slot is replaced with a LockedSlot (nothing can be put in
- * or taken out), and clicking the Spin slot triggers a spin on the real block entity.
- */
+/** Five-row slot-machine GUI with a dedicated payment input and prize output. */
 public class SlotMachineMenu extends ChestMenu {
 
-    // Null on the client-side dummy instance.
     private final SlotMachineBlockEntity blockEntity;
 
-    /** Client-side: built when the server tells the client to open this menu. */
     public SlotMachineMenu(int containerId, Inventory playerInventory) {
         this(containerId, playerInventory,
                 new SimpleBlockContainer(SlotMachineBlockEntity.SIZE, () -> {}, player -> true), null);
     }
 
-    /** Server-side: called from SlotMachineBlockEntity#createMenu with the real container. */
     public SlotMachineMenu(int containerId, Inventory playerInventory, Container container,
                            SlotMachineBlockEntity blockEntity) {
-        super(ModMenus.SLOT_MACHINE, containerId, playerInventory, container, 3);
+        super(ModMenus.SLOT_MACHINE, containerId, playerInventory, container, 5);
         this.blockEntity = blockEntity;
     }
 
-    // Called by the super constructor while it builds the slots (before our fields are set),
-    // so this must not touch instance fields.
     @Override
     protected Slot addSlot(Slot slot) {
-        if (slot.container instanceof SimpleBlockContainer
-                && slot.getContainerSlot() != SlotMachineBlockEntity.PAYMENT_SLOT) {
-            slot = new LockedSlot(slot.container, slot.getContainerSlot(), slot.x, slot.y);
+        if (slot.container instanceof SimpleBlockContainer) {
+            int index = slot.getContainerSlot();
+            if (index == SlotMachineBlockEntity.PAYMENT_SLOT) {
+                slot = new PaymentSlot(slot.container, index, slot.x, slot.y);
+            } else if (index == SlotMachineBlockEntity.PRIZE_SLOT) {
+                slot = new PrizeSlot(slot.container, index, slot.x, slot.y);
+            } else {
+                slot = new LockedSlot(slot.container, index, slot.x, slot.y);
+            }
         }
         return super.addSlot(slot);
     }
@@ -57,33 +55,34 @@ public class SlotMachineMenu extends ChestMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
-        // Shift-click must not pull the decorative reel/spin items out of the machine.
-        if (slotIndex < SlotMachineBlockEntity.SIZE && slotIndex != SlotMachineBlockEntity.PAYMENT_SLOT) {
+        if (slotIndex < SlotMachineBlockEntity.SIZE
+                && slotIndex != SlotMachineBlockEntity.PAYMENT_SLOT
+                && slotIndex != SlotMachineBlockEntity.PRIZE_SLOT) {
             return ItemStack.EMPTY;
         }
         return super.quickMoveStack(player, slotIndex);
     }
 
-    /** A slot that never allows inserting or taking items - purely visual. */
     private static class LockedSlot extends Slot {
         LockedSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);
         }
+        @Override public boolean mayPlace(ItemStack stack) { return false; }
+        @Override public boolean mayPickup(Player player) { return false; }
+        @Override public int getMaxStackSize() { return 1; }
+    }
 
-        @Override
-        public boolean mayPlace(ItemStack stack) {
-            return false;
+    private static class PaymentSlot extends Slot {
+        PaymentSlot(Container container, int slot, int x, int y) {
+            super(container, slot, x, y);
         }
+        @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.DIAMOND); }
+    }
 
-        @Override
-        public boolean mayPickup(Player player) {
-            return false;
+    private static class PrizeSlot extends Slot {
+        PrizeSlot(Container container, int slot, int x, int y) {
+            super(container, slot, x, y);
         }
-
-        @Override
-        public int getMaxStackSize() {
-            // Stops shift-click from merging extra items into the displayed stack.
-            return 1;
-        }
+        @Override public boolean mayPlace(ItemStack stack) { return false; }
     }
 }
