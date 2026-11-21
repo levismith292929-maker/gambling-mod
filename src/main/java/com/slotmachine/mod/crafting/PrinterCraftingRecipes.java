@@ -20,6 +20,8 @@ public final class PrinterCraftingRecipes {
             new RecipeSerializer<>(MapCodec.unit(new InkTankRecipe()), StreamCodec.unit(new InkTankRecipe()));
     public static final RecipeSerializer<EmptyPrinterRecipe> EMPTY_PRINTER_SERIALIZER =
             new RecipeSerializer<>(MapCodec.unit(new EmptyPrinterRecipe()), StreamCodec.unit(new EmptyPrinterRecipe()));
+    public static final RecipeSerializer<DeckRecipe> DECK_SERIALIZER =
+            new RecipeSerializer<>(MapCodec.unit(new DeckRecipe()), StreamCodec.unit(new DeckRecipe()));
 
     private PrinterCraftingRecipes() {}
 
@@ -28,6 +30,8 @@ public final class PrinterCraftingRecipes {
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "ink_tank"), INK_TANK_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "empty_printer"), EMPTY_PRINTER_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "deck"), DECK_SERIALIZER);
         SlotMachineMod.LOGGER.info("Registered ink tank and printer crafting recipes");
     }
 
@@ -89,6 +93,20 @@ public final class PrinterCraftingRecipes {
         }
         @Override public ItemStack assemble(CraftingInput input) { return new ItemStack(ModItems.INK_TANK); }
         @Override public RecipeSerializer<? extends CustomRecipe> getSerializer() { return INK_TANK_SERIALIZER; }
+    }
+
+    public static class DeckRecipe extends CustomRecipe {
+        private static final String[] PATTERN = {"ppppp", "pcccp", "pcccp", "pcccp", "ppppp"};
+        private static final String[][] INGREDIENTS = new String[128][];
+        static {
+            INGREDIENTS['p'] = new String[]{"minecraft:paper"};
+            INGREDIENTS['c'] = new String[]{"slotmachine:playing_card"};
+        }
+        @Override public boolean matches(CraftingInput input, Level level) {
+            return matchesPattern(input, PATTERN, INGREDIENTS);
+        }
+        @Override public ItemStack assemble(CraftingInput input) { return new ItemStack(ModBlocks.DECK_ITEM); }
+        @Override public RecipeSerializer<? extends CustomRecipe> getSerializer() { return DECK_SERIALIZER; }
     }
 
     public static class EmptyPrinterRecipe extends CustomRecipe {
