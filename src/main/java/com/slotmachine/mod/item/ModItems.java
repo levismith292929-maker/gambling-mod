@@ -23,24 +23,19 @@ public class ModItems {
     public static final Item GOLD_LUCK_CHARM = registerLuckCharm("gold_luck_charm", 20, 3);
     public static final Item DIAMOND_LUCK_CHARM = registerLuckCharm("diamond_luck_charm", 40, 4);
 
-    // Card printing items. The printer is unstackable because its four ink levels are stored on the item.
     public static final Item BLANK_CARD = register("blank_card");
     public static final Item INK_TANK = register("ink_tank");
-    public static final Item EMPTY_PRINTER = registerUnique("empty_printer");
     public static final Item PLAYING_CARD = register("playing_card");
 
     private static Item register(String name) {
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
         return Registry.register(BuiltInRegistries.ITEM, key, new Item(new Item.Properties().setId(key)));
     }
 
-    private static Item registerUnique(String name) {
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
-        return Registry.register(BuiltInRegistries.ITEM, key, new PrinterItem(new Item.Properties().setId(key).stacksTo(1)));
-    }
-
     private static Item registerLuckCharm(String name, int luck, int tier) {
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
         return Registry.register(BuiltInRegistries.ITEM, key,
                 new LuckCharmItem(new Item.Properties().setId(key).stacksTo(1), luck, tier));
     }
