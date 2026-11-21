@@ -13,14 +13,17 @@ public class ModMenus {
             BuiltInRegistries.MENU,
             Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "slot_machine"),
             new MenuType<ChestMenu>((containerId, inventory) -> new SlotMachineMenu(containerId, inventory),
-                    FeatureFlagSet.of())
-    );
+                    FeatureFlagSet.of()));
 
     public static final MenuType<SuperCraftingMenu> SUPER_CRAFTING_TABLE = Registry.register(
             BuiltInRegistries.MENU,
             Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "super_crafting_table"),
-            new MenuType<SuperCraftingMenu>(SuperCraftingMenu::new, FeatureFlagSet.of())
-    );
+            new MenuType<SuperCraftingMenu>(SuperCraftingMenu::new, FeatureFlagSet.of()));
+
+    public static final MenuType<PrinterMenu> PRINTER = Registry.register(
+            BuiltInRegistries.MENU,
+            Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "printer"),
+            new MenuType<PrinterMenu>(PrinterMenu::new, FeatureFlagSet.of()));
 
     public static void registerMenus() {
         SlotMachineMod.LOGGER.info("Registering menus for " + SlotMachineMod.MOD_ID);
