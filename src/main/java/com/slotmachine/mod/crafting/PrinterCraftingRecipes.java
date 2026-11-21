@@ -11,7 +11,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -62,10 +61,10 @@ public final class PrinterCraftingRecipes {
     }
 
     private static String dyeColor(ItemStack stack) {
-        if (stack.is(Items.BLACK_DYE)) return PrinterInkData.BLACK;
-        if (stack.is(Items.MAGENTA_DYE)) return PrinterInkData.MAGENTA;
-        if (stack.is(Items.YELLOW_DYE)) return PrinterInkData.YELLOW;
-        if (stack.is(Items.CYAN_DYE)) return PrinterInkData.CYAN;
+        if (stack.is(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("black_dye")))) return PrinterInkData.BLACK;
+        if (stack.is(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("magenta_dye")))) return PrinterInkData.MAGENTA;
+        if (stack.is(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("yellow_dye")))) return PrinterInkData.YELLOW;
+        if (stack.is(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("cyan_dye")))) return PrinterInkData.CYAN;
         return null;
     }
 
