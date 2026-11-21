@@ -9,14 +9,17 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 
 public class ModMenus {
-
-    // Typed as MenuType<ChestMenu> so vanilla's ContainerScreen (a MenuAccess<ChestMenu>)
-    // can be registered for it on the client.
     public static final MenuType<ChestMenu> SLOT_MACHINE = Registry.register(
             BuiltInRegistries.MENU,
             Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "slot_machine"),
             new MenuType<ChestMenu>((containerId, inventory) -> new SlotMachineMenu(containerId, inventory),
                     FeatureFlagSet.of())
+    );
+
+    public static final MenuType<SuperCraftingMenu> SUPER_CRAFTING_TABLE = Registry.register(
+            BuiltInRegistries.MENU,
+            Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "super_crafting_table"),
+            new MenuType<SuperCraftingMenu>(SuperCraftingMenu::new, FeatureFlagSet.of())
     );
 
     public static void registerMenus() {

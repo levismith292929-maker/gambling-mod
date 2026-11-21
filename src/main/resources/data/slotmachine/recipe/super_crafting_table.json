@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": true,
+  "category": "misc",
+  "pattern": [
+    "dcd",
+    "ccc",
+    "dcd"
+  ],
+  "key": {
+    "c": "minecraft:crafting_table",
+    "d": "minecraft:diamond"
+  },
+  "result": {
+    "id": "slotmachine:super_crafting_table",
+    "count": 1
+  }
+}

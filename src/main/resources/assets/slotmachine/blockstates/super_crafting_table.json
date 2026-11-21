@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "slotmachine:block/super_crafting_table"
+    }
+  }
+}

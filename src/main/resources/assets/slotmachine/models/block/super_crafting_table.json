@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "slotmachine:block/super_crafting_table_side",
+    "down": "minecraft:block/spruce_planks",
+    "up": "slotmachine:block/super_crafting_table_top",
+    "north": "slotmachine:block/super_crafting_table_front",
+    "south": "slotmachine:block/super_crafting_table_front",
+    "east": "slotmachine:block/super_crafting_table_side",
+    "west": "slotmachine:block/super_crafting_table_side"
+  }
+}

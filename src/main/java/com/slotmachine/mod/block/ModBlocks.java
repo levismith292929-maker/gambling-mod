@@ -10,18 +10,28 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 
 public class ModBlocks {
-
-    // Placeholder bedrock-looking block for the test. No tool is required to get the drop.
     public static final Block SLOT_MACHINE = registerBlock(
             "slot_machine",
             SlotMachineBlock::new,
             BlockBehaviour.Properties.of().strength(3.0f, 1200.0f)
     );
-
     public static final Item SLOT_MACHINE_ITEM = registerBlockItem("slot_machine", SLOT_MACHINE);
+
+    public static final Block SUPER_CRAFTING_TABLE = registerBlock(
+            "super_crafting_table",
+            SuperCraftingTableBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .sound(SoundType.WOOD)
+                    .strength(2.5f, 6.0f)
+    );
+    public static final Item SUPER_CRAFTING_TABLE_ITEM = registerBlockItem(
+            "super_crafting_table", SUPER_CRAFTING_TABLE);
 
     private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> factory,
                                        BlockBehaviour.Properties properties) {

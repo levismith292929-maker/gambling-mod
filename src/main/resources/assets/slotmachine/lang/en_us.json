@@ -7,6 +7,8 @@
   "item.slotmachine.slottophalf": "Slot Machine - Top Half",
   "item.slotmachine.slotbottomhalf": "Slot Machine - Bottom Half",
   "block.slotmachine.slot_machine": "Slot Machine",
+  "block.slotmachine.super_crafting_table": "Super Crafting Table",
+  "container.slotmachine.super_crafting_table": "Super Crafting Table",
   "item.slotmachine.clover": "Clover",
   "item.slotmachine.empty_charm": "Empty Luck Charm",
   "item.slotmachine.stone_luck_charm": "Stone Luck Charm",
