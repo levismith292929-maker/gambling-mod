@@ -25,6 +25,14 @@ public class PrinterBlock extends Block implements EntityBlock {
         return new PrinterBlockEntity(pos, state);
     }
 
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PrinterBlockEntity printer) {
+            printer.dropContents();
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
     private InteractionResult openPrinter(Level level, BlockPos pos, Player player) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PrinterBlockEntity printer) {
             player.openMenu(printer);
