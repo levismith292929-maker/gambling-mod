@@ -1,1 +1,6 @@
-{"parent":"slotmachine:block/printer"}
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "slotmachine:item/minecraft_printer_32x32"
+  }
+}

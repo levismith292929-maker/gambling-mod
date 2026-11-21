@@ -1,1 +1,48 @@
-{"parent":"minecraft:block/block","textures":{"particle":"slotmachine:block/printer_texture_32x32","printer":"slotmachine:block/printer_texture_32x32"},"elements":[{"name":"printer_main_body","from":[1,0,2],"to":[15,9,14],"faces":{"north":{"uv":[0,0,8,5],"texture":"#printer"},"east":{"uv":[8,0,16,5],"texture":"#printer"},"south":{"uv":[8,0,16,5],"texture":"#printer"},"west":{"uv":[8,0,16,5],"texture":"#printer"},"up":{"uv":[0,5,8,12],"texture":"#printer"},"down":{"uv":[0,12,8,16],"texture":"#printer","cullface":"down"}}},{"name":"top_feeder_tray","from":[4,9,10],"to":[12,14,11],"rotation":{"angle":-22.5,"axis":"x","origin":[8,9,10.5]},"faces":{"north":{"uv":[13,5,16,9],"texture":"#printer"},"east":{"uv":[13,5,14,9],"texture":"#printer"},"south":{"uv":[13,5,16,9],"texture":"#printer"},"west":{"uv":[15,5,16,9],"texture":"#printer"},"up":{"uv":[13,5,16,6],"texture":"#printer"},"down":{"uv":[13,8,16,9],"texture":"#printer"}}},{"name":"top_input_paper","from":[5,9,9.2],"to":[11,15,9.8],"rotation":{"angle":-22.5,"axis":"x","origin":[8,9,9.5]},"faces":{"north":{"uv":[8,5,13,11],"texture":"#printer"},"east":{"uv":[8,5,9,11],"texture":"#printer"},"south":{"uv":[8,5,13,11],"texture":"#printer"},"west":{"uv":[12,5,13,11],"texture":"#printer"},"up":{"uv":[8,5,13,6],"texture":"#printer"},"down":{"uv":[8,10,13,11],"texture":"#printer"}}},{"name":"front_output_tray","from":[4,1,0],"to":[12,2,2],"faces":{"north":{"uv":[13,5,16,6],"texture":"#printer"},"east":{"uv":[13,5,14,6],"texture":"#printer"},"south":{"uv":[13,5,16,6],"texture":"#printer"},"west":{"uv":[15,5,16,6],"texture":"#printer"},"up":{"uv":[13,5,16,7],"texture":"#printer"},"down":{"uv":[13,7,16,9],"texture":"#printer"}}},{"name":"front_printed_page","from":[5,2,-1.5],"to":[11,2.5,3],"rotation":{"angle":22.5,"axis":"x","origin":[8,2.25,2]},"faces":{"north":{"uv":[8,10,13,11],"texture":"#printer"},"east":{"uv":[8,5,9,11],"texture":"#printer"},"south":{"uv":[8,5,13,6],"texture":"#printer"},"west":{"uv":[12,5,13,11],"texture":"#printer"},"up":{"uv":[8,5,13,11],"texture":"#printer"},"down":{"uv":[8,5,13,11],"texture":"#printer"}}}]}
+{
+  "credit": "Minecraft 3D Printer Block Model (32x32 texture compatible)",
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "slotmachine:block/printer_texture_32x32",
+    "printer": "slotmachine:block/printer_texture_32x32"
+  },
+  "elements": [
+    {"name":"printer_main_body","from":[1,0,2],"to":[15,9,14],"faces":{
+      "north":{"uv":[0,0,8,5],"texture":"#printer"},
+      "east":{"uv":[8,0,16,5],"texture":"#printer"},
+      "south":{"uv":[8,0,16,5],"texture":"#printer"},
+      "west":{"uv":[8,0,16,5],"texture":"#printer"},
+      "up":{"uv":[0,5,8,12],"texture":"#printer"},
+      "down":{"uv":[0,12,8,16],"texture":"#printer","cullface":"down"}}},
+    {"name":"top_feeder_tray","from":[4,9,10],"to":[12,14,11],
+      "rotation":{"angle":-22.5,"axis":"x","origin":[8,9,10.5]},"faces":{
+      "north":{"uv":[13,5,16,9],"texture":"#printer"},
+      "east":{"uv":[13,5,14,9],"texture":"#printer"},
+      "south":{"uv":[13,5,16,9],"texture":"#printer"},
+      "west":{"uv":[15,5,16,9],"texture":"#printer"},
+      "up":{"uv":[13,5,16,6],"texture":"#printer"},
+      "down":{"uv":[13,8,16,9],"texture":"#printer"}}},
+    {"name":"top_input_paper","from":[5,9,9.2],"to":[11,15,9.8],
+      "rotation":{"angle":-22.5,"axis":"x","origin":[8,9,9.5]},"faces":{
+      "north":{"uv":[8,5,13,11],"texture":"#printer"},
+      "east":{"uv":[8,5,9,11],"texture":"#printer"},
+      "south":{"uv":[8,5,13,11],"texture":"#printer"},
+      "west":{"uv":[12,5,13,11],"texture":"#printer"},
+      "up":{"uv":[8,5,13,6],"texture":"#printer"},
+      "down":{"uv":[8,10,13,11],"texture":"#printer"}}},
+    {"name":"front_output_tray","from":[4,1,0],"to":[12,2,2],"faces":{
+      "north":{"uv":[13,5,16,6],"texture":"#printer"},
+      "east":{"uv":[13,5,14,6],"texture":"#printer"},
+      "south":{"uv":[13,5,16,6],"texture":"#printer"},
+      "west":{"uv":[15,5,16,6],"texture":"#printer"},
+      "up":{"uv":[13,5,16,7],"texture":"#printer"},
+      "down":{"uv":[13,7,16,9],"texture":"#printer"}}},
+    {"name":"front_printed_page","from":[5,2,-1.5],"to":[11,2.5,3],
+      "rotation":{"angle":22.5,"axis":"x","origin":[8,2.25,2]},"faces":{
+      "north":{"uv":[8,10,13,11],"texture":"#printer"},
+      "east":{"uv":[8,5,9,11],"texture":"#printer"},
+      "south":{"uv":[8,5,13,6],"texture":"#printer"},
+      "west":{"uv":[12,5,13,11],"texture":"#printer"},
+      "up":{"uv":[8,5,13,11],"texture":"#printer"},
+      "down":{"uv":[8,5,13,11],"texture":"#printer"}}}
+  ]
+}

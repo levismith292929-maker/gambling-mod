@@ -1,1 +1,6 @@
-{"model":{"type":"minecraft:model","model":"slotmachine:block/printer"}}
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "slotmachine:item/printer"
+  }
+}
