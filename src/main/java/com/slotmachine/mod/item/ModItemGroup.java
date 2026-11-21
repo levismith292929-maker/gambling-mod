@@ -29,6 +29,7 @@ public class ModItemGroup {
                 output.accept(ModBlocks.SLOT_MACHINE_ITEM);
                 output.accept(ModBlocks.SUPER_CRAFTING_TABLE_ITEM);
                 output.accept(ModBlocks.PRINTER_ITEM);
+                output.accept(ModBlocks.DECK_ITEM);
                 output.accept(ModItems.CLOVER);
                 output.accept(ModItems.EMPTY_CHARM);
                 output.accept(ModItems.STONE_LUCK_CHARM);
