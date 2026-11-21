@@ -13,7 +13,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModItemGroup {
     public static final ResourceKey<CreativeModeTab> GAMBLING_TAB_KEY = ResourceKey.create(
-            BuiltInRegistries.CREATIVE_MODE_TAB.key(), Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "gambling"));
+            BuiltInRegistries.CREATIVE_MODE_TAB.key(),
+            Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "gambling"));
 
     public static final CreativeModeTab GAMBLING_TAB = FabricCreativeModeTab.builder()
             .icon(() -> new ItemStack(ModBlocks.SLOT_MACHINE_ITEM))
@@ -27,6 +28,7 @@ public class ModItemGroup {
                 output.accept(ModItems.SLOTBOTTOMHALF);
                 output.accept(ModBlocks.SLOT_MACHINE_ITEM);
                 output.accept(ModBlocks.SUPER_CRAFTING_TABLE_ITEM);
+                output.accept(ModBlocks.PRINTER_ITEM);
                 output.accept(ModItems.CLOVER);
                 output.accept(ModItems.EMPTY_CHARM);
                 output.accept(ModItems.STONE_LUCK_CHARM);
@@ -35,7 +37,6 @@ public class ModItemGroup {
                 output.accept(ModItems.DIAMOND_LUCK_CHARM);
                 output.accept(ModItems.BLANK_CARD);
                 output.accept(ModItems.INK_TANK);
-                output.accept(ModItems.EMPTY_PRINTER);
                 output.accept(ModItems.PLAYING_CARD);
             }).build();
 
