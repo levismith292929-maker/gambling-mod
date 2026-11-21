@@ -61,5 +61,6 @@ public class PrinterScreen extends AbstractContainerScreen<PrinterMenu> {
         graphics.drawString(font, "Card Printer", 8, 7, 0xFF202020, false);
         graphics.drawString(font, "Add matching dye to each slot", 8, 30, 0xFF202020, false);
         graphics.drawString(font, "Blank Card", 132, 76, 0xFF202020, false);
+        graphics.drawString(font, "✓", 144 + 41, 91, 0xFFFFFFFF, false);
     }
 }
