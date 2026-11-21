@@ -14,5 +14,9 @@
   "item.slotmachine.stone_luck_charm": "Stone Luck Charm",
   "item.slotmachine.iron_luck_charm": "Iron Luck Charm",
   "item.slotmachine.gold_luck_charm": "Gold Luck Charm",
-  "item.slotmachine.diamond_luck_charm": "Diamond Luck Charm"
+  "item.slotmachine.diamond_luck_charm": "Diamond Luck Charm",
+  "item.slotmachine.blank_card": "Blank Card",
+  "item.slotmachine.ink_tank": "Ink Tank",
+  "item.slotmachine.empty_printer": "Empty Printer",
+  "item.slotmachine.playing_card": "Playing Card"
 }

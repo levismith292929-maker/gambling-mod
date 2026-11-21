@@ -1,6 +1,7 @@
 package com.slotmachine.mod;
 import com.slotmachine.mod.block.ModBlockEntities;
 import com.slotmachine.mod.block.ModBlocks;
+import com.slotmachine.mod.crafting.PrinterCraftingRecipes;
 import com.slotmachine.mod.item.ModItemGroup;
 import com.slotmachine.mod.item.ModItems;
 import com.slotmachine.mod.menu.ModMenus;
@@ -23,6 +24,7 @@ public class SlotMachineMod implements ModInitializer {
         ModBlocks.registerModBlocks();
         ModBlockEntities.registerBlockEntities();
         ModMenus.registerMenus();
+        PrinterCraftingRecipes.register();
         ModItemGroup.registerItemGroups();
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (Blocks.TALL_GRASS.getLootTable().orElseThrow().equals(key)) {

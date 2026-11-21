@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "show_notification": true,
+  "category": "misc",
+  "ingredients": [
+    ["minecraft:gold_nugget"],
+    ["minecraft:paper"]
+  ],
+  "result": {
+    "id": "slotmachine:blank_card",
+    "count": 1
+  }
+}

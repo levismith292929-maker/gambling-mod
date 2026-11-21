@@ -33,6 +33,10 @@ public class ModItemGroup {
                 output.accept(ModItems.IRON_LUCK_CHARM);
                 output.accept(ModItems.GOLD_LUCK_CHARM);
                 output.accept(ModItems.DIAMOND_LUCK_CHARM);
+                output.accept(ModItems.BLANK_CARD);
+                output.accept(ModItems.INK_TANK);
+                output.accept(ModItems.EMPTY_PRINTER);
+                output.accept(ModItems.PLAYING_CARD);
             }).build();
 
     public static void registerItemGroups() {

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": true,
+  "category": "misc",
+  "pattern": [
+    "fiiif",
+    "ItttI",
+    "IgwgI",
+    "IIIII"
+  ],
+  "key": {
+    "i": ["minecraft:iron_nugget"],
+    "I": ["minecraft:iron_ingot"],
+    "t": ["slotmachine:ink_tank"],
+    "f": ["minecraft:feather"],
+    "g": ["slotmachine:gear"],
+    "w": ["slotmachine:copper_wire"]
+  },
+  "result": {
+    "id": "slotmachine:empty_printer",
+    "count": 1
+  }
+}
