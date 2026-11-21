@@ -8,7 +8,9 @@
   "item.slotmachine.slotbottomhalf": "Slot Machine - Bottom Half",
   "block.slotmachine.slot_machine": "Slot Machine",
   "block.slotmachine.super_crafting_table": "Super Crafting Table",
+  "block.slotmachine.printer": "Card Printer",
   "container.slotmachine.super_crafting_table": "Super Crafting Table",
+  "container.slotmachine.printer": "Card Printer",
   "item.slotmachine.clover": "Clover",
   "item.slotmachine.empty_charm": "Empty Luck Charm",
   "item.slotmachine.stone_luck_charm": "Stone Luck Charm",
@@ -17,6 +19,5 @@
   "item.slotmachine.diamond_luck_charm": "Diamond Luck Charm",
   "item.slotmachine.blank_card": "Blank Card",
   "item.slotmachine.ink_tank": "Ink Tank",
-  "item.slotmachine.empty_printer": "Empty Printer",
   "item.slotmachine.playing_card": "Playing Card"
 }
