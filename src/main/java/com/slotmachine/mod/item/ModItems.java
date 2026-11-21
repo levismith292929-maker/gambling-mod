@@ -36,7 +36,7 @@ public class ModItems {
 
     private static Item registerUnique(String name) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
-        return Registry.register(BuiltInRegistries.ITEM, key, new Item(new Item.Properties().setId(key).stacksTo(1)));
+        return Registry.register(BuiltInRegistries.ITEM, key, new PrinterItem(new Item.Properties().setId(key).stacksTo(1)));
     }
 
     private static Item registerLuckCharm(String name, int luck, int tier) {
