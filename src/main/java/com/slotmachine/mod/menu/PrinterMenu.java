@@ -48,7 +48,7 @@ public class PrinterMenu extends AbstractContainerMenu {
         });
 
         SimpleContainer printButton = new SimpleContainer(1);
-        ItemStack button = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
+        ItemStack button = new ItemStack(Items.EMERALD);
         button.set(DataComponents.CUSTOM_NAME, Component.literal("Print"));
         printButton.setItem(0, button);
         addSlot(new Slot(printButton, 0, 181, 88) {
