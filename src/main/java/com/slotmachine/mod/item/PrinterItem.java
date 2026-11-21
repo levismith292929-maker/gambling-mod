@@ -17,7 +17,7 @@ public class PrinterItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> builder, TooltipFlag tooltipFlag) {
-        builder.accept(inkLine("Black Ink: ", PrinterInkData.BLACK, stack, ChatFormatting.BLACK));
+        builder.accept(inkLine("Black Ink: ", PrinterInkData.BLACK, stack, ChatFormatting.WHITE));
         builder.accept(inkLine("Magenta Ink: ", PrinterInkData.MAGENTA, stack, ChatFormatting.LIGHT_PURPLE));
         builder.accept(inkLine("Yellow Ink: ", PrinterInkData.YELLOW, stack, ChatFormatting.YELLOW));
         builder.accept(inkLine("Cyan Ink: ", PrinterInkData.CYAN, stack, ChatFormatting.AQUA));
