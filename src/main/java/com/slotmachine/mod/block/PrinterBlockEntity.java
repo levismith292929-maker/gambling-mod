@@ -15,6 +15,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
@@ -97,7 +98,7 @@ public class PrinterBlockEntity extends BlockEntity implements MenuProvider {
         if (blankCard.isEmpty() || !blankCard.is(ModItems.BLANK_CARD)) return;
         for (int amount : ink) {
             if (amount < 10) {
-                player.displayClientMessage(Component.literal("The printer needs at least 10% of every ink."), true);
+                if (player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(Component.literal("The printer needs at least 10% of every ink."), true);
                 return;
             }
         }
@@ -113,7 +114,7 @@ public class PrinterBlockEntity extends BlockEntity implements MenuProvider {
                     worldPosition.getZ() + 0.5, printedCard);
         }
         setChanged();
-        player.displayClientMessage(Component.literal("Printed a Playing Card!"), true);
+        if (player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(Component.literal("Printed a Playing Card!"), true);
     }
 
     @Override
