@@ -1,21 +1,3 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "show_notification": true,
-  "category": "misc",
-  "pattern": [
-    "iIi",
-    "p p",
-    "p p",
-    "p p",
-    "iIi"
-  ],
-  "key": {
-    "i": ["minecraft:iron_nugget"],
-    "I": ["minecraft:iron_ingot"],
-    "p": ["minecraft:glass_pane"]
-  },
-  "result": {
-    "id": "slotmachine:ink_tank",
-    "count": 1
-  }
+  "type": "slotmachine:ink_tank"
 }
