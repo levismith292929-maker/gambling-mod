@@ -2,6 +2,7 @@ package com.slotmachine.mod.menu;
 
 import com.slotmachine.mod.block.PrinterBlockEntity;
 import com.slotmachine.mod.item.ModItems;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
