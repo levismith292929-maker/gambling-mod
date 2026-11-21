@@ -23,9 +23,7 @@ public class DeckBlock extends Block {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         ItemStack cards = new ItemStack(ModItems.PLAYING_CARD, 52);
-        if (!player.getInventory().add(cards)) {
-            player.drop(cards, false);
-        }
+        player.getInventory().placeItemBackInInventory(cards);
 
         // Remove the placed deck without dropping another deck item.
         level.setBlock(pos, Blocks.AIR.defaultBlockState(),
