@@ -1,7 +1,9 @@
 package com.slotmachine.mod.block;
 
 import com.slotmachine.mod.item.ModItems;
+import com.slotmachine.mod.item.PlayingCardData;
 import com.slotmachine.mod.menu.PrinterMenu;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -108,7 +110,7 @@ public class PrinterBlockEntity extends BlockEntity implements MenuProvider {
         else inventory.setChanged();
 
         for (int i = 0; i < ink.length; i++) ink[i] -= 10;
-        ItemStack printedCard = new ItemStack(ModItems.PLAYING_CARD);
+        ItemStack printedCard = PlayingCardData.create(ThreadLocalRandom.current().nextInt(52));
         if (!player.getInventory().add(printedCard)) {
             Containers.dropItemStack(level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
                     worldPosition.getZ() + 0.5, printedCard);
