@@ -1,10 +1,11 @@
 package com.slotmachine.mod.item;
 
-import java.util.ArrayList;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -15,9 +16,7 @@ import net.minecraft.world.level.Level;
 
 /** A red milk item that removes card effects at the cost of permanent max health. */
 public class LifeForceItem extends Item {
-    private static final String MODIFIER_TAG_PREFIX = "slotmachine_card_modifier_";
-    private static final String SPEED_TAG = "slotmachine_card_effect_speed";
-    private static final String SLOWNESS_TAG = "slotmachine_card_effect_slowness";
+    private static final int MAX_TRACKED_ATTRIBUTE_EFFECTS = 64;
 
     public LifeForceItem(Properties properties) {
         super(properties);
@@ -30,21 +29,19 @@ public class LifeForceItem extends Item {
         MinecraftServer server = level.getServer();
         if (server == null) return InteractionResult.PASS;
 
-        if (serverPlayer.getTags().contains(SPEED_TAG)) {
-            run(server, serverPlayer, "effect clear @s minecraft:speed");
-            serverPlayer.removeTag(SPEED_TAG);
-        }
-        if (serverPlayer.getTags().contains(SLOWNESS_TAG)) {
-            run(server, serverPlayer, "effect clear @s minecraft:slowness");
-            serverPlayer.removeTag(SLOWNESS_TAG);
-        }
+        run(server, serverPlayer,
+                "execute if entity @s[tag=slotmachine_card_effect_speed] run effect clear @s minecraft:speed");
+        serverPlayer.removeTag("slotmachine_card_effect_speed");
+        run(server, serverPlayer,
+                "execute if entity @s[tag=slotmachine_card_effect_slowness] run effect clear @s minecraft:slowness");
+        serverPlayer.removeTag("slotmachine_card_effect_slowness");
 
-        for (String tag : new ArrayList<>(serverPlayer.getTags())) {
-            if (tag.startsWith(MODIFIER_TAG_PREFIX)) {
-                String token = tag.substring(MODIFIER_TAG_PREFIX.length());
-                run(server, serverPlayer, "attribute @s minecraft:movement_speed modifier remove slotmachine:card_" + token);
-                serverPlayer.removeTag(tag);
-            }
+        for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
+            String tag = "slotmachine_card_modifier_" + index;
+            String modifierId = "slotmachine:card_" + index;
+            run(server, serverPlayer, "execute if entity @s[tag=" + tag +
+                    "] run attribute @s minecraft:movement_speed modifier remove " + modifierId);
+            serverPlayer.removeTag(tag);
         }
 
         String penaltyId = "slotmachine:life_force_" +
@@ -59,7 +56,8 @@ public class LifeForceItem extends Item {
             stack.shrink(1);
             ItemStack bucket = new ItemStack(Items.BUCKET);
             if (!serverPlayer.getInventory().add(bucket)) {
-                serverPlayer.drop(bucket, false);
+                Containers.dropItemStack(level, serverPlayer.getX(), serverPlayer.getY() + 0.5,
+                        serverPlayer.getZ(), bucket);
             }
         }
 
