@@ -26,6 +26,7 @@ public class ModItems {
     public static final Item BLANK_CARD = register("blank_card");
     public static final Item INK_TANK = register("ink_tank");
     public static final Item PLAYING_CARD = registerPlayingCard("playing_card");
+    public static final Item LIFE_FORCE = registerLifeForce("life_force");
 
     private static Item register(String name) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
@@ -38,6 +39,13 @@ public class ModItems {
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
         return Registry.register(BuiltInRegistries.ITEM, key,
                 new PlayingCardItem(new Item.Properties().setId(key).stacksTo(1)));
+    }
+
+    private static Item registerLifeForce(String name) {
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        return Registry.register(BuiltInRegistries.ITEM, key,
+                new LifeForceItem(new Item.Properties().setId(key).stacksTo(16)));
     }
 
     private static Item registerLuckCharm(String name, int luck, int tier) {
