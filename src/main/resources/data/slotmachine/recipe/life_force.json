@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": true,
+  "category": "misc",
+  "pattern": [
+    "rrgrr",
+    "rdgdr",
+    "ggmgg",
+    "rdgdr",
+    "rrgrr"
+  ],
+  "key": {
+    "r": [
+      "minecraft:poppy"
+    ],
+    "g": [
+      "minecraft:gold_nugget"
+    ],
+    "d": [
+      "minecraft:diamond"
+    ],
+    "m": [
+      "minecraft:milk_bucket"
+    ]
+  },
+  "result": {
+    "id": "slotmachine:life_force",
+    "count": 1
+  }
+}
