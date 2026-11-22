@@ -2,11 +2,15 @@ package com.slotmachine.mod.item;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -75,7 +79,6 @@ public class PlayingCardItem extends Item {
     private static void applyGood(MinecraftServer server, ServerPlayer player) {
         int choice = player.getRandom().nextInt(3);
         if (choice == 0) {
-            // Smaller reward: one or two emeralds instead of one to five.
             int amount = 1 + player.getRandom().nextInt(2);
             run(server, player, "give @s minecraft:emerald " + amount);
         } else if (choice == 1) {
@@ -85,7 +88,7 @@ public class PlayingCardItem extends Item {
             run(server, player, "effect give @s minecraft:speed " + seconds + " " + amplifier + " true");
         } else {
             double amount = 0.00025 + player.getRandom().nextDouble() * 0.00225;
-            runAttribute(server, player, amount);
+            applyMovementModifier(player, amount);
         }
     }
 
@@ -103,7 +106,7 @@ public class PlayingCardItem extends Item {
             run(server, player, "damage @s " + damage + " minecraft:generic");
         } else {
             double amount = -(0.00025 + player.getRandom().nextDouble() * 0.00225);
-            runAttribute(server, player, amount);
+            applyMovementModifier(player, amount);
         }
     }
 
@@ -135,15 +138,18 @@ public class PlayingCardItem extends Item {
                 (0.8 + player.getRandom().nextDouble() * 0.4));
     }
 
-    /** Uses numbered IDs so Life Force can reliably remove every card modifier. */
-    private static void runAttribute(MinecraftServer server, ServerPlayer player, double amount) {
+    /** Uses the same stable modifier IDs that Life Force removes. */
+    private static void applyMovementModifier(ServerPlayer player, double amount) {
+        AttributeInstance movementSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movementSpeed == null) return;
+
         for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
             String tag = "slotmachine_card_modifier_" + index;
-            String modifierId = "slotmachine:card_" + index;
             if (!player.entityTags().contains(tag)) {
-                run(server, player, "attribute @s minecraft:movement_speed modifier add " +
-                        modifierId + " " +
-                        String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value");
+                ResourceLocation modifierId = ResourceLocation.fromNamespaceAndPath(
+                        "slotmachine", "card_" + index);
+                movementSpeed.addOrUpdateTransientModifier(new AttributeModifier(
+                        modifierId, amount, AttributeModifier.Operation.ADD_VALUE));
                 player.addTag(tag);
                 return;
             }
