@@ -2,9 +2,9 @@ package com.slotmachine.mod.item;
 
 import java.util.UUID;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +19,7 @@ public class PlayingCardItem extends Item {
             "minecraft:rotten_flesh", "minecraft:dirt", "minecraft:cobblestone",
             "minecraft:gravel", "minecraft:spider_eye"
     };
+
     private static final String[] NEUTRAL_SOUNDS = {
             "minecraft:block.note_block.pling",
             "minecraft:block.amethyst_block.chime",
@@ -33,6 +34,7 @@ public class PlayingCardItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
 
         int cardIndex = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag().getIntOr("CardIndex", -1);
@@ -40,37 +42,43 @@ public class PlayingCardItem extends Item {
         boolean joker = cardIndex == 52 || cardIndex == 53;
         boolean royal = rank >= 9 && rank <= 11;
 
-        int roll = player.getRandom().nextInt(5);
         Outcome outcome;
         if (joker) {
+            int roll = player.getRandom().nextInt(5);
             outcome = roll < 3 ? Outcome.BAD : roll == 3 ? Outcome.GOOD : Outcome.NEUTRAL;
         } else if (royal) {
+            int roll = player.getRandom().nextInt(5);
             outcome = roll < 3 ? Outcome.NEUTRAL : roll == 3 ? Outcome.GOOD : Outcome.BAD;
         } else {
-            int evenRoll = player.getRandom().nextInt(3);
-            outcome = evenRoll == 0 ? Outcome.BAD : evenRoll == 1 ? Outcome.GOOD : Outcome.NEUTRAL;
+            int roll = player.getRandom().nextInt(3);
+            outcome = roll == 0 ? Outcome.BAD : roll == 1 ? Outcome.GOOD : Outcome.NEUTRAL;
         }
 
         MinecraftServer server = level.getServer();
         if (server != null) {
-            switch (outcome) {
-                case GOOD -> applyGood(server, player, level);
-                case BAD -> applyBad(server, player, level);
-                case NEUTRAL -> applyNeutral(server, player, level);
+            if (outcome == Outcome.GOOD) {
+                applyGood(server, serverPlayer);
+            } else if (outcome == Outcome.BAD) {
+                applyBad(server, serverPlayer);
+            } else {
+                applyNeutral(server, serverPlayer);
             }
         }
 
-        String message = switch (outcome) {
-            case GOOD -> "Good luck! Your card gave you a reward.";
-            case BAD -> "Bad luck! Your card brought trouble.";
-            case NEUTRAL -> "Nothing special... just a sound.";
-        };
-        player.displayClientMessage(Component.literal(message), true);
+        String message;
+        if (outcome == Outcome.GOOD) {
+            message = "Good luck! Your card gave you a reward.";
+        } else if (outcome == Outcome.BAD) {
+            message = "Bad luck! Your card brought trouble.";
+        } else {
+            message = "Nothing special... just a sound.";
+        }
+        serverPlayer.sendSystemMessage(Component.literal(message), true);
         stack.shrink(1);
         return InteractionResult.SUCCESS;
     }
 
-    private static void applyGood(MinecraftServer server, Player player, Level level) {
+    private static void applyGood(MinecraftServer server, ServerPlayer player) {
         int choice = player.getRandom().nextInt(3);
         if (choice == 0) {
             int amount = 1 + player.getRandom().nextInt(5);
@@ -85,41 +93,38 @@ public class PlayingCardItem extends Item {
         }
     }
 
-    private static void applyBad(MinecraftServer server, ServerPlayer player, Level level) {
-        switch (player.getRandom().nextInt(4)) {
-            case 0 -> {
-                int seconds = 10 + player.getRandom().nextInt(21);
-                int amplifier = player.getRandom().nextInt(2);
-                run(server, player, "effect give @s minecraft:slowness " + seconds + " " + amplifier + " true");
-            }
-            case 1 -> {
-                String item = CLEAR_ITEMS[player.getRandom().nextInt(CLEAR_ITEMS.length)];
-                run(server, player, "clear @s " + item + " 1");
-            }
-            case 2 -> {
-                int damage = 1 + player.getRandom().nextInt(6);
-                run(server, player, "damage @s " + damage + " minecraft:generic");
-            }
-            default -> {
-                double amount = -(0.05 + player.getRandom().nextDouble() * 0.25);
-                runAttribute(server, player, amount);
-            }
+    private static void applyBad(MinecraftServer server, ServerPlayer player) {
+        int choice = player.getRandom().nextInt(4);
+        if (choice == 0) {
+            int seconds = 10 + player.getRandom().nextInt(21);
+            int amplifier = player.getRandom().nextInt(2);
+            run(server, player, "effect give @s minecraft:slowness " + seconds + " " + amplifier + " true");
+        } else if (choice == 1) {
+            String item = CLEAR_ITEMS[player.getRandom().nextInt(CLEAR_ITEMS.length)];
+            run(server, player, "clear @s " + item + " 1");
+        } else if (choice == 2) {
+            int damage = 1 + player.getRandom().nextInt(6);
+            run(server, player, "damage @s " + damage + " minecraft:generic");
+        } else {
+            double amount = -(0.05 + player.getRandom().nextDouble() * 0.25);
+            runAttribute(server, player, amount);
         }
     }
 
-    private static void applyNeutral(MinecraftServer server, ServerPlayer player, Level level) {
+    private static void applyNeutral(MinecraftServer server, ServerPlayer player) {
         String sound = NEUTRAL_SOUNDS[player.getRandom().nextInt(NEUTRAL_SOUNDS.length)];
         run(server, player, "playsound " + sound + " master @s ~ ~ ~ 1 " +
                 (0.8 + player.getRandom().nextDouble() * 0.4));
     }
 
+    /** Attribute modifiers are permanent and stack; each card gets a unique modifier ID. */
     private static void runAttribute(MinecraftServer server, ServerPlayer player, double amount) {
         String modifierId = "slotmachine:card_" + UUID.randomUUID().toString().replace("-", "");
         run(server, player, "attribute @s minecraft:movement_speed modifier add " +
                 modifierId + " " + String.format(java.util.Locale.ROOT, "%.3f", amount) + " add_value");
     }
 
-    private static void run(MinecraftServer server, Player player, String command) {
+    private static void run(MinecraftServer server, ServerPlayer player, String command) {
         server.getCommands().performPrefixedCommand(
                 player.createCommandSourceStack().withPermission(2), command);
     }
