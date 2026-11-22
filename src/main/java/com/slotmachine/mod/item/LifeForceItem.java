@@ -2,7 +2,7 @@ package com.slotmachine.mod.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
@@ -43,7 +43,7 @@ public class LifeForceItem extends Item {
         AttributeInstance movementSpeed = serverPlayer.getAttribute(Attributes.MOVEMENT_SPEED);
         if (movementSpeed != null) {
             for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
-                movementSpeed.removeModifier(ResourceLocation.fromNamespaceAndPath(
+                movementSpeed.removeModifier(Identifier.fromNamespaceAndPath(
                         "slotmachine", "card_" + index));
                 serverPlayer.removeTag("slotmachine_card_modifier_" + index);
             }
@@ -54,7 +54,7 @@ public class LifeForceItem extends Item {
             String penaltyId = "life_force_" +
                     java.util.UUID.randomUUID().toString().replace("-", "");
             maxHealth.addPermanentModifier(new AttributeModifier(
-                    ResourceLocation.fromNamespaceAndPath("slotmachine", penaltyId),
+                    Identifier.fromNamespaceAndPath("slotmachine", penaltyId),
                     -1.0,
                     AttributeModifier.Operation.ADD_VALUE));
         }
