@@ -2,7 +2,7 @@ package com.slotmachine.mod.item;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
@@ -146,7 +146,7 @@ public class PlayingCardItem extends Item {
         for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
             String tag = "slotmachine_card_modifier_" + index;
             if (!player.entityTags().contains(tag)) {
-                ResourceLocation modifierId = ResourceLocation.fromNamespaceAndPath(
+                Identifier modifierId = Identifier.fromNamespaceAndPath(
                         "slotmachine", "card_" + index);
                 movementSpeed.addOrUpdateTransientModifier(new AttributeModifier(
                         modifierId, amount, AttributeModifier.Operation.ADD_VALUE));
