@@ -20,6 +20,12 @@ public class ModBlockEntities {
             FabricBlockEntityTypeBuilder.<PrinterBlockEntity>create(
                     PrinterBlockEntity::new, ModBlocks.PRINTER).build());
 
+    public static final BlockEntityType<DeckBlockEntity> DECK_BLOCK_ENTITY = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "deck_block_entity"),
+            FabricBlockEntityTypeBuilder.<DeckBlockEntity>create(
+                    DeckBlockEntity::new, ModBlocks.DECK).build());
+
     public static void registerBlockEntities() {
         SlotMachineMod.LOGGER.info("Registering block entities for " + SlotMachineMod.MOD_ID);
     }
