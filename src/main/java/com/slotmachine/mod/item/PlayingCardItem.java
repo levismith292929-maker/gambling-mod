@@ -87,9 +87,10 @@ public class PlayingCardItem extends Item {
         } else if (choice == 1) {
             int seconds = 15 + player.getRandom().nextInt(31);
             int amplifier = player.getRandom().nextInt(2);
+            player.addTag("slotmachine_card_effect_speed");
             run(server, player, "effect give @s minecraft:speed " + seconds + " " + amplifier + " true");
         } else {
-            double amount = 0.05 + player.getRandom().nextDouble() * 0.25;
+            double amount = 0.00025 + player.getRandom().nextDouble() * 0.00225;
             runAttribute(server, player, amount);
         }
     }
@@ -99,6 +100,7 @@ public class PlayingCardItem extends Item {
         if (choice == 0) {
             int seconds = 10 + player.getRandom().nextInt(21);
             int amplifier = player.getRandom().nextInt(2);
+            player.addTag("slotmachine_card_effect_slowness");
             run(server, player, "effect give @s minecraft:slowness " + seconds + " " + amplifier + " true");
         } else if (choice == 1) {
             String item = CLEAR_ITEMS[player.getRandom().nextInt(CLEAR_ITEMS.length)];
@@ -107,7 +109,7 @@ public class PlayingCardItem extends Item {
             int damage = 1 + player.getRandom().nextInt(6);
             run(server, player, "damage @s " + damage + " minecraft:generic");
         } else {
-            double amount = -(0.05 + player.getRandom().nextDouble() * 0.25);
+            double amount = -(0.00025 + player.getRandom().nextDouble() * 0.00225);
             runAttribute(server, player, amount);
         }
     }
@@ -120,9 +122,11 @@ public class PlayingCardItem extends Item {
 
     /** Attribute modifiers are permanent and stack; each card gets a unique modifier ID. */
     private static void runAttribute(MinecraftServer server, ServerPlayer player, double amount) {
-        String modifierId = "slotmachine:card_" + UUID.randomUUID().toString().replace("-", "");
+        String token = UUID.randomUUID().toString().replace("-", "");
+        String modifierId = "slotmachine:card_" + token;
+        player.addTag("slotmachine_card_modifier_" + token);
         run(server, player, "attribute @s minecraft:movement_speed modifier add " +
-                modifierId + " " + String.format(java.util.Locale.ROOT, "%.3f", amount) + " add_value");
+                modifierId + " " + String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value");
     }
 
     private static void run(MinecraftServer server, ServerPlayer player, String command) {
