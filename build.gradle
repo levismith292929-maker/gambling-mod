@@ -143,18 +143,23 @@ tasks.register("generatePlayingCardAssets") {
         if (milkImage == null) {
             throw new GradleException("Could not read the vanilla Minecraft milk bucket texture.")
         }
-        for (int y = 1; y < Math.min(8, milkImage.height); y++) {
-            for (int x = 4; x < Math.min(12, milkImage.width); x++) {
+        // Recolor every opaque near-white milk pixel across the complete
+        // vanilla texture, rather than only a small hard-coded rectangle.
+        // The darker gray/silver bucket pixels remain unchanged.
+        for (int y = 0; y < milkImage.height; y++) {
+            for (int x = 0; x < milkImage.width; x++) {
                 int argb = milkImage.getRGB(x, y)
                 int alpha = (argb >>> 24) & 255
                 int red = (argb >>> 16) & 255
                 int green = (argb >>> 8) & 255
                 int blue = argb & 255
-                if (alpha > 0 && red > 150 && green > 150 && blue > 150) {
-                    int average = (int) ((red + green + blue) / 3)
-                    int shade = Math.max(0, Math.min(255, average))
-                    int tintedGreen = Math.max(0, (int) (shade * 0.12))
-                    int tintedBlue = Math.max(0, (int) (shade * 0.20))
+                int brightest = Math.max(red, Math.max(green, blue))
+                int darkest = Math.min(red, Math.min(green, blue))
+                if (alpha > 0 && red >= 170 && green >= 170 && blue >= 170 &&
+                        brightest - darkest <= 45) {
+                    int shade = Math.max(170, Math.min(255, (red + green + blue) / 3))
+                    int tintedGreen = Math.max(0, (int) (shade * 0.08))
+                    int tintedBlue = Math.max(0, (int) (shade * 0.12))
                     milkImage.setRGB(x, y, (alpha << 24) | (shade << 16) | (tintedGreen << 8) | tintedBlue)
                 }
             }
