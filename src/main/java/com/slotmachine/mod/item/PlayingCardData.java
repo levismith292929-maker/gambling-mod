@@ -18,8 +18,15 @@ public final class PlayingCardData {
 
     /** A deck-drawn card has its face artwork and no enchantment glint. */
     public static ItemStack create(int cardIndex) {
-        int safeIndex = Math.floorMod(cardIndex, 52);
-        String cardName = RANKS[safeIndex % 13] + "_of_" + SUITS[safeIndex / 13];
+        int safeIndex = Math.floorMod(cardIndex, 54);
+        String cardName;
+        if (safeIndex == 52) {
+            cardName = "joker_red";
+        } else if (safeIndex == 53) {
+            cardName = "joker_black";
+        } else {
+            cardName = RANKS[safeIndex % 13] + "_of_" + SUITS[safeIndex / 13];
+        }
         ItemStack card = new ItemStack(ModItems.PLAYING_CARD);
         card.set(DataComponents.ITEM_MODEL,
                 Identifier.fromNamespaceAndPath("slotmachine", "cards/" + cardName));
