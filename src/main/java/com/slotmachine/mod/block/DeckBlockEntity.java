@@ -1,15 +1,13 @@
 package com.slotmachine.mod.block;
 
-import com.slotmachine.mod.item.ModItems;
+import com.slotmachine.mod.item.PlayingCardData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -42,12 +40,8 @@ public class DeckBlockEntity extends BlockEntity {
         if (nextCard >= CARD_COUNT) return ItemStack.EMPTY;
 
         int cardIndex = order[nextCard++];
-        ItemStack card = new ItemStack(ModItems.PLAYING_CARD);
-        CompoundTag tag = card.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        tag.putInt("CardIndex", cardIndex);
-        card.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         setChanged();
-        return card;
+        return PlayingCardData.create(cardIndex);
     }
 
     public boolean hasCardsRemaining() {
