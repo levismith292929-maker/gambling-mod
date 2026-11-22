@@ -1,6 +1,5 @@
 package com.slotmachine.mod.item;
 
-import java.util.UUID;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -11,16 +10,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 /** A single-use playing card that triggers one randomized effect when right-clicked. */
 public class PlayingCardItem extends Item {
-    private static final String[] CLEAR_ITEMS = {
-            "minecraft:rotten_flesh", "minecraft:dirt", "minecraft:cobblestone",
-            "minecraft:gravel", "minecraft:spider_eye"
-    };
-
+    private static final int MAX_TRACKED_ATTRIBUTE_EFFECTS = 64;
     private static final String[] NEUTRAL_SOUNDS = {
             "minecraft:block.note_block.pling",
             "minecraft:block.amethyst_block.chime",
@@ -66,14 +62,11 @@ public class PlayingCardItem extends Item {
             }
         }
 
-        String message;
-        if (outcome == Outcome.GOOD) {
-            message = "Good luck! Your card gave you a reward.";
-        } else if (outcome == Outcome.BAD) {
-            message = "Bad luck! Your card brought trouble.";
-        } else {
-            message = "Nothing special... just a sound.";
-        }
+        String message = outcome == Outcome.GOOD
+                ? "Good luck! Your card gave you a reward."
+                : outcome == Outcome.BAD
+                ? "Bad luck! Your card brought trouble."
+                : "Nothing special... just a sound.";
         serverPlayer.sendSystemMessage(Component.literal(message), true);
         stack.shrink(1);
         return InteractionResult.SUCCESS;
@@ -82,7 +75,8 @@ public class PlayingCardItem extends Item {
     private static void applyGood(MinecraftServer server, ServerPlayer player) {
         int choice = player.getRandom().nextInt(3);
         if (choice == 0) {
-            int amount = 1 + player.getRandom().nextInt(5);
+            // Smaller reward: one or two emeralds instead of one to five.
+            int amount = 1 + player.getRandom().nextInt(2);
             run(server, player, "give @s minecraft:emerald " + amount);
         } else if (choice == 1) {
             int seconds = 15 + player.getRandom().nextInt(31);
@@ -103,8 +97,7 @@ public class PlayingCardItem extends Item {
             player.addTag("slotmachine_card_effect_slowness");
             run(server, player, "effect give @s minecraft:slowness " + seconds + " " + amplifier + " true");
         } else if (choice == 1) {
-            String item = CLEAR_ITEMS[player.getRandom().nextInt(CLEAR_ITEMS.length)];
-            run(server, player, "clear @s " + item + " 1");
+            clearOneOwnedItem(player);
         } else if (choice == 2) {
             int damage = 1 + player.getRandom().nextInt(6);
             run(server, player, "damage @s " + damage + " minecraft:generic");
@@ -114,23 +107,52 @@ public class PlayingCardItem extends Item {
         }
     }
 
+    /** Selects only from eligible item stacks actually present in the player's inventory. */
+    private static void clearOneOwnedItem(ServerPlayer player) {
+        Items[] ignored = new Items[0]; // Keeps this method's choices explicitly item-based below.
+        net.minecraft.world.item.Item[] choices = {
+                Items.ROTTEN_FLESH, Items.DIRT, Items.COBBLESTONE, Items.GRAVEL, Items.SPIDER_EYE
+        };
+        java.util.ArrayList<Integer> eligibleSlots = new java.util.ArrayList<>();
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (stack.isEmpty()) continue;
+            for (net.minecraft.world.item.Item item : choices) {
+                if (stack.is(item)) {
+                    eligibleSlots.add(slot);
+                    break;
+                }
+            }
+        }
+        if (!eligibleSlots.isEmpty()) {
+            int slot = eligibleSlots.get(player.getRandom().nextInt(eligibleSlots.size()));
+            player.getInventory().removeItem(slot, 1);
+        }
+    }
+
     private static void applyNeutral(MinecraftServer server, ServerPlayer player) {
         String sound = NEUTRAL_SOUNDS[player.getRandom().nextInt(NEUTRAL_SOUNDS.length)];
         run(server, player, "playsound " + sound + " master @s ~ ~ ~ 1 " +
                 (0.8 + player.getRandom().nextDouble() * 0.4));
     }
 
-    /** Attribute modifiers are permanent and stack; each card gets a unique modifier ID. */
+    /** Uses numbered IDs so Life Force can reliably remove every card modifier. */
     private static void runAttribute(MinecraftServer server, ServerPlayer player, double amount) {
-        String token = UUID.randomUUID().toString().replace("-", "");
-        String modifierId = "slotmachine:card_" + token;
-        player.addTag("slotmachine_card_modifier_" + token);
-        run(server, player, "attribute @s minecraft:movement_speed modifier add " +
-                modifierId + " " + String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value");
+        for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
+            String tag = "slotmachine_card_modifier_" + index;
+            String modifierId = "slotmachine:card_" + index;
+            String command = "execute unless entity @s[tag=" + tag + "] run attribute @s " +
+                    "minecraft:movement_speed modifier add " + modifierId + " " +
+                    String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value";
+            if (run(server, player, command) > 0) {
+                player.addTag(tag);
+                return;
+            }
+        }
     }
 
-    private static void run(MinecraftServer server, ServerPlayer player, String command) {
-        server.getCommands().performPrefixedCommand(
+    private static int run(MinecraftServer server, ServerPlayer player, String command) {
+        return server.getCommands().performPrefixedCommand(
                 player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER), command);
     }
 
