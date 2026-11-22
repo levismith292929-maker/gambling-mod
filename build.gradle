@@ -50,16 +50,26 @@ tasks.register("generatePlayingCardAssets") {
         connection.setConnectTimeout(20000)
         connection.setReadTimeout(60000)
 
-        def cardCount = 0
+        def standardCardCount = 0
+        def jokerCount = 0
         def zip = new java.util.zip.ZipInputStream(connection.getInputStream())
         try {
             java.util.zip.ZipEntry entry
             while ((entry = zip.nextEntry) != null) {
-                def path = entry.name.replace('\\', '/')
-                def matcher = path =~ /.*png cards\/card fronts\/(clubs|diamonds|hearts|spades)\/([^\/]+)\.png$/
-                if (!entry.directory && matcher.matches()) {
-                    def originalName = matcher.group(2)
-                    def cardName = originalName.toLowerCase(Locale.ROOT).replace(' ', '_')
+                def path = entry.name.replace('\\\\', '/')
+                def standardMatcher = path =~ /.*png cards\\/card fronts\\/(clubs|diamonds|hearts|spades)\\/([^\\/]+)\\.png$/
+                def jokerMatcher = path =~ /.*png cards\\/card fronts\\/jokers\\/(red|black) joker\\.png$/
+
+                if (!entry.directory && (standardMatcher.matches() || jokerMatcher.matches())) {
+                    def cardName
+                    if (jokerMatcher.matches()) {
+                        cardName = "joker_" + jokerMatcher.group(1)
+                        jokerCount++
+                    } else {
+                        cardName = standardMatcher.group(2).toLowerCase(Locale.ROOT).replace(' ', '_')
+                        standardCardCount++
+                    }
+
                     def textureFile = new File(outputRoot, "assets/slotmachine/textures/item/cards/${cardName}.png")
                     textureFile.parentFile.mkdirs()
                     textureFile.withOutputStream { out ->
@@ -80,7 +90,6 @@ tasks.register("generatePlayingCardAssets") {
                     itemFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
                         model: [type: "minecraft:model", model: "slotmachine:item/cards/${cardName}"]
                     ]))
-                    cardCount++
                 }
                 zip.closeEntry()
             }
@@ -88,8 +97,8 @@ tasks.register("generatePlayingCardAssets") {
             zip.close()
         }
 
-        if (cardCount != 52) {
-            throw new GradleException("Expected 52 standard playing-card images from the CC0 deck, but downloaded ${cardCount}.")
+        if (standardCardCount != 52 || jokerCount != 2) {
+            throw new GradleException("Expected 52 standard card images and 2 original Joker images, but downloaded ${standardCardCount} standard cards and ${jokerCount} Jokers.")
         }
 
         // Generate a paper-shaped blank card: vanilla-paper silhouette with a warmer yellow tint.
@@ -109,35 +118,7 @@ tasks.register("generatePlayingCardAssets") {
         }
         javax.imageio.ImageIO.write(image, "png", blankTexture)
 
-        // Two simple original joker faces complete the 54-card deck.
-        ["joker_red", "joker_black"].each { jokerName ->
-            def jokerTexture = new File(outputRoot, "assets/slotmachine/textures/item/cards/${jokerName}.png")
-            jokerTexture.parentFile.mkdirs()
-            def jokerImage = new java.awt.image.BufferedImage(16, 24, java.awt.image.BufferedImage.TYPE_INT_ARGB)
-            def graphics = jokerImage.createGraphics()
-            graphics.setColor(java.awt.Color.WHITE)
-            graphics.fillRect(1, 1, 14, 22)
-            graphics.setColor(jokerName == "joker_red" ? new java.awt.Color(190, 35, 45) : java.awt.Color.BLACK)
-            graphics.drawRect(1, 1, 13, 21)
-            graphics.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 5))
-            graphics.drawString("J", 6, 9)
-            graphics.drawString("O", 5, 15)
-            graphics.drawString("K", 6, 21)
-            graphics.dispose()
-            javax.imageio.ImageIO.write(jokerImage, "png", jokerTexture)
 
-            def jokerModel = new File(outputRoot, "assets/slotmachine/models/item/cards/${jokerName}.json")
-            jokerModel.parentFile.mkdirs()
-            jokerModel.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
-                parent: "minecraft:item/generated",
-                textures: [layer0: "slotmachine:item/cards/${jokerName}"]
-            ]))
-            def jokerItem = new File(outputRoot, "assets/slotmachine/items/cards/${jokerName}.json")
-            jokerItem.parentFile.mkdirs()
-            jokerItem.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
-                model: [type: "minecraft:model", model: "slotmachine:item/cards/${jokerName}"]
-            ]))
-        }
     }
 }
 
