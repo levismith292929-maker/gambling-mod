@@ -40,7 +40,7 @@ public class PlayingCardItem extends Item {
         boolean joker = cardIndex == 52 || cardIndex == 53;
         boolean royal = rank >= 9 && rank <= 11;
 
-        int roll = level.random.nextInt(5);
+        int roll = player.getRandom().nextInt(5);
         Outcome outcome;
         if (joker) {
             outcome = roll < 3 ? Outcome.BAD : roll == 3 ? Outcome.GOOD : Outcome.NEUTRAL;
@@ -80,7 +80,7 @@ public class PlayingCardItem extends Item {
             int amplifier = level.random.nextInt(2);
             run(server, player, "effect give @s minecraft:speed " + seconds + " " + amplifier + " true");
         } else {
-            double amount = 0.05 + level.random.nextDouble() * 0.25;
+            double amount = 0.05 + player.getRandom().nextDouble() * 0.25;
             runAttribute(server, player, amount);
         }
     }
