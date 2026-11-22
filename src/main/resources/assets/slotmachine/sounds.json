@@ -1,42 +1,7 @@
 {
-  "spin_start": {
-    "sounds": [
-      {
-        "name": "slotmachine:slotmachine/spin_start",
-        "volume": 1.0
-      }
-    ]
-  },
-  "reel_tick": {
-    "sounds": [
-      {
-        "name": "slotmachine:slotmachine/reel_tick",
-        "volume": 0.75
-      }
-    ]
-  },
-  "reel_stop": {
-    "sounds": [
-      {
-        "name": "slotmachine:slotmachine/reel_stop",
-        "volume": 1.0
-      }
-    ]
-  },
-  "birdly1": {
-    "sounds": [
-      {
-        "name": "minecraft:block.note_block.pling",
-        "volume": 1.0
-      }
-    ]
-  },
-  "birdly2": {
-    "sounds": [
-      {
-        "name": "minecraft:block.note_block.pling",
-        "volume": 1.0
-      }
-    ]
-  }
+  "spin_start": {"sounds":[{"name":"slotmachine:slotmachine/spin_start","volume":1.0}]},
+  "reel_tick": {"sounds":[{"name":"slotmachine:slotmachine/reel_tick","volume":0.75}]},
+  "reel_stop": {"sounds":[{"name":"slotmachine:slotmachine/reel_stop","volume":1.0}]},
+  "birdly1": {"sounds":[{"name":"slotmachine:birdly1","volume":1.0}]},
+  "birdly2": {"sounds":[{"name":"slotmachine:birdly2","volume":1.0}]}
 }
