@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /** Stores an independently shuffled, persistent 52-card order for one placed deck. */
 public class DeckBlockEntity extends BlockEntity {
-    private static final int CARD_COUNT = 52;
+    private static final int CARD_COUNT = 54;
     private static final String ORDER_PREFIX = "Card";
     private final int[] order = new int[CARD_COUNT];
     private int nextCard = 0;
