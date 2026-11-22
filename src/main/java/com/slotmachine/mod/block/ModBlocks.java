@@ -30,13 +30,13 @@ public class ModBlocks {
     public static final Block PRINTER = registerBlock(
             "printer", PrinterBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
-                    .sound(SoundType.METAL).strength(2.5f, 6.0f));
+                    .sound(SoundType.METAL).strength(2.5f, 6.0f).noOcclusion());
     public static final Item PRINTER_ITEM = registerBlockItem("printer", PRINTER);
 
     public static final Block DECK = registerBlock(
             "deck", DeckBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD)
-                    .sound(SoundType.WOOD).strength(0.5f, 2.0f));
+                    .sound(SoundType.WOOD).strength(0.5f, 2.0f).noOcclusion());
     public static final Item DECK_ITEM = registerBlockItem("deck", DECK);
 
     private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> factory,
