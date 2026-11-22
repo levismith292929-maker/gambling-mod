@@ -85,7 +85,7 @@ public class PlayingCardItem extends Item {
         }
     }
 
-    private static void applyBad(MinecraftServer server, Player player, Level level) {
+    private static void applyBad(MinecraftServer server, ServerPlayer player, Level level) {
         switch (player.getRandom().nextInt(4)) {
             case 0 -> {
                 int seconds = 10 + player.getRandom().nextInt(21);
@@ -107,13 +107,13 @@ public class PlayingCardItem extends Item {
         }
     }
 
-    private static void applyNeutral(MinecraftServer server, Player player, Level level) {
+    private static void applyNeutral(MinecraftServer server, ServerPlayer player, Level level) {
         String sound = NEUTRAL_SOUNDS[player.getRandom().nextInt(NEUTRAL_SOUNDS.length)];
         run(server, player, "playsound " + sound + " master @s ~ ~ ~ 1 " +
                 (0.8 + player.getRandom().nextDouble() * 0.4));
     }
 
-    private static void runAttribute(MinecraftServer server, Player player, double amount) {
+    private static void runAttribute(MinecraftServer server, ServerPlayer player, double amount) {
         String modifierId = "slotmachine:card_" + UUID.randomUUID().toString().replace("-", "");
         run(server, player, "attribute @s minecraft:movement_speed modifier add " +
                 modifierId + " " + String.format(java.util.Locale.ROOT, "%.3f", amount) + " add_value");
