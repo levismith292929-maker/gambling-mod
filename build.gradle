@@ -92,24 +92,52 @@ tasks.register("generatePlayingCardAssets") {
             throw new GradleException("Expected 52 standard playing-card images from the CC0 deck, but downloaded ${cardCount}.")
         }
 
-        // Generate a warm, lightly textured blank-card icon.
+        // Generate a paper-shaped blank card: vanilla-paper silhouette with a warmer yellow tint.
         def blankTexture = new File(outputRoot, "assets/slotmachine/textures/item/blank_card.png")
         blankTexture.parentFile.mkdirs()
         def image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB)
         def random = new Random(7319)
-        for (int y = 0; y < 16; y++) {
-            for (int x = 0; x < 16; x++) {
-                int variation = random.nextInt(13) - 6
-                int red = Math.max(0, Math.min(255, 244 + variation))
-                int green = Math.max(0, Math.min(255, 224 + variation))
-                int blue = Math.max(0, Math.min(255, 177 + variation))
-                if (x == 0 || y == 0 || x == 15 || y == 15) {
-                    red = 207; green = 178; blue = 125
-                }
+        for (int y = 1; y < 15; y++) {
+            for (int x = 2; x < 14; x++) {
+                boolean edge = x == 2 || x == 13 || y == 1 || y == 14
+                int variation = random.nextInt(9) - 4
+                int red = Math.max(0, Math.min(255, (edge ? 218 : 250) + variation))
+                int green = Math.max(0, Math.min(255, (edge ? 195 : 235) + variation))
+                int blue = Math.max(0, Math.min(255, (edge ? 139 : 190) + variation))
                 image.setRGB(x, y, (255 << 24) | (red << 16) | (green << 8) | blue)
             }
         }
         javax.imageio.ImageIO.write(image, "png", blankTexture)
+
+        // Two simple original joker faces complete the 54-card deck.
+        ["joker_red", "joker_black"].each { jokerName ->
+            def jokerTexture = new File(outputRoot, "assets/slotmachine/textures/item/cards/${jokerName}.png")
+            jokerTexture.parentFile.mkdirs()
+            def jokerImage = new java.awt.image.BufferedImage(16, 24, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+            def graphics = jokerImage.createGraphics()
+            graphics.setColor(java.awt.Color.WHITE)
+            graphics.fillRect(1, 1, 14, 22)
+            graphics.setColor(jokerName == "joker_red" ? new java.awt.Color(190, 35, 45) : java.awt.Color.BLACK)
+            graphics.drawRect(1, 1, 13, 21)
+            graphics.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 5))
+            graphics.drawString("J", 6, 9)
+            graphics.drawString("O", 5, 15)
+            graphics.drawString("K", 6, 21)
+            graphics.dispose()
+            javax.imageio.ImageIO.write(jokerImage, "png", jokerTexture)
+
+            def jokerModel = new File(outputRoot, "assets/slotmachine/models/item/cards/${jokerName}.json")
+            jokerModel.parentFile.mkdirs()
+            jokerModel.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+                parent: "minecraft:item/generated",
+                textures: [layer0: "slotmachine:item/cards/${jokerName}"]
+            ]))
+            def jokerItem = new File(outputRoot, "assets/slotmachine/items/cards/${jokerName}.json")
+            jokerItem.parentFile.mkdirs()
+            jokerItem.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+                model: [type: "minecraft:model", model: "slotmachine:item/cards/${jokerName}"]
+            ]))
+        }
     }
 }
 
