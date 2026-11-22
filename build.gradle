@@ -101,23 +101,32 @@ tasks.register("generatePlayingCardAssets") {
             throw new GradleException("Expected 52 standard card images and 2 original Joker images, but downloaded ${standardCardCount} standard cards and ${jokerCount} Jokers.")
         }
 
-        // Generate a paper-shaped blank card: vanilla-paper silhouette with a warmer yellow tint.
+        // Start from Minecraft's actual paper item texture and tint it warm yellow.
         def blankTexture = new File(outputRoot, "assets/slotmachine/textures/item/blank_card.png")
         blankTexture.parentFile.mkdirs()
-        def image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB)
-        def random = new Random(7319)
-        for (int y = 1; y < 15; y++) {
-            for (int x = 2; x < 14; x++) {
-                boolean edge = x == 2 || x == 13 || y == 1 || y == 14
-                int variation = random.nextInt(9) - 4
-                int red = Math.max(0, Math.min(255, (edge ? 218 : 250) + variation))
-                int green = Math.max(0, Math.min(255, (edge ? 195 : 235) + variation))
-                int blue = Math.max(0, Math.min(255, (edge ? 139 : 190) + variation))
-                image.setRGB(x, y, (255 << 24) | (red << 16) | (green << 8) | blue)
+        def vanillaPaperUrl = new URL("https://project-crafting.github.io/minecraft-auto-updated-textures-api/textures/item/paper.png")
+        def paperConnection = vanillaPaperUrl.openConnection()
+        paperConnection.setConnectTimeout(20000)
+        paperConnection.setReadTimeout(60000)
+        def paperImage = javax.imageio.ImageIO.read(paperConnection.getInputStream())
+        if (paperImage == null) {
+            throw new GradleException("Could not read the vanilla Minecraft paper texture.")
+        }
+        for (int y = 0; y < paperImage.height; y++) {
+            for (int x = 0; x < paperImage.width; x++) {
+                int argb = paperImage.getRGB(x, y)
+                int alpha = (argb >>> 24) & 255
+                if (alpha == 0) continue
+                int red = (argb >>> 16) & 255
+                int green = (argb >>> 8) & 255
+                int blue = argb & 255
+                red = Math.min(255, red + 22)
+                green = Math.min(255, green + 16)
+                blue = Math.max(0, (int) (blue * 0.78))
+                paperImage.setRGB(x, y, (alpha << 24) | (red << 16) | (green << 8) | blue)
             }
         }
-        javax.imageio.ImageIO.write(image, "png", blankTexture)
-
+        javax.imageio.ImageIO.write(paperImage, "png", blankTexture)
 
     }
 }
