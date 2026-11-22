@@ -19,9 +19,7 @@ loom {
 }
 
 dependencies {
-    // Minecraft 26.3 / Java 25
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // Minecraft 26.3 uses the plain implementation configuration in this project.
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
@@ -36,10 +34,90 @@ tasks.withType(JavaCompile).configureEach {
     it.options.release = 25
 }
 
+def generatedCardResources = layout.buildDirectory.dir("generated/resources/playingcards/main")
+
+tasks.register("generatePlayingCardAssets") {
+    outputs.dir(generatedCardResources)
+
+    doLast {
+        def outputRoot = generatedCardResources.get().asFile
+        if (outputRoot.exists()) {
+            outputRoot.deleteDir()
+        }
+
+        def archiveUrl = new URL("https://github.com/AustinGabriel/Public-Domain-and-CC0-Playing-Cards/archive/refs/heads/main.zip")
+        def connection = archiveUrl.openConnection()
+        connection.setConnectTimeout(20000)
+        connection.setReadTimeout(60000)
+
+        def cardCount = 0
+        def zip = new java.util.zip.ZipInputStream(connection.getInputStream())
+        try {
+            java.util.zip.ZipEntry entry
+            while ((entry = zip.nextEntry) != null) {
+                def path = entry.name.replace('\\', '/')
+                def matcher = path =~ /png cards\/card fronts\/(clubs|diamonds|hearts|spades)\/([^\/]+)\.png$/
+                if (!entry.directory && matcher.matches()) {
+                    def originalName = matcher.group(2)
+                    def cardName = originalName.toLowerCase(Locale.ROOT).replace(' ', '_')
+                    def textureFile = new File(outputRoot, "assets/slotmachine/textures/item/cards/${cardName}.png")
+                    textureFile.parentFile.mkdirs()
+                    textureFile.withOutputStream { out ->
+                        byte[] buffer = new byte[8192]
+                        int read
+                        while ((read = zip.read(buffer)) > 0) out.write(buffer, 0, read)
+                    }
+
+                    def modelFile = new File(outputRoot, "assets/slotmachine/models/item/cards/${cardName}.json")
+                    modelFile.parentFile.mkdirs()
+                    modelFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+                        parent: "minecraft:item/generated",
+                        textures: [layer0: "slotmachine:item/cards/${cardName}"]
+                    ]))
+
+                    def itemFile = new File(outputRoot, "assets/slotmachine/items/cards/${cardName}.json")
+                    itemFile.parentFile.mkdirs()
+                    itemFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+                        model: [type: "minecraft:model", model: "slotmachine:item/cards/${cardName}"]
+                    ]))
+                    cardCount++
+                }
+                zip.closeEntry()
+            }
+        } finally {
+            zip.close()
+        }
+
+        if (cardCount != 52) {
+            throw new GradleException("Expected 52 standard playing-card images from the CC0 deck, but downloaded ${cardCount}.")
+        }
+
+        // Generate a warm, lightly textured blank-card icon.
+        def blankTexture = new File(outputRoot, "assets/slotmachine/textures/item/blank_card.png")
+        blankTexture.parentFile.mkdirs()
+        def image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+        def random = new Random(7319)
+        for (int y = 0; y < 16; y++) {
+            for (int x = 0; x < 16; x++) {
+                int variation = random.nextInt(13) - 6
+                int red = Math.max(0, Math.min(255, 244 + variation))
+                int green = Math.max(0, Math.min(255, 224 + variation))
+                int blue = Math.max(0, Math.min(255, 177 + variation))
+                if (x == 0 || y == 0 || x == 15 || y == 15) {
+                    red = 207; green = 178; blue = 125
+                }
+                image.setRGB(x, y, (255 << 24) | (red << 16) | (green << 8) | blue)
+            }
+        }
+        javax.imageio.ImageIO.write(image, "png", blankTexture)
+    }
+}
+
+sourceSets.main.resources.srcDir(generatedCardResources)
+
 processResources {
+    dependsOn tasks.named("generatePlayingCardAssets")
     inputs.property "version", project.version
-
-
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
