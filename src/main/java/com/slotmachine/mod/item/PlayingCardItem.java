@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -126,7 +127,7 @@ public class PlayingCardItem extends Item {
 
     private static void run(MinecraftServer server, ServerPlayer player, String command) {
         server.getCommands().performPrefixedCommand(
-                player.createCommandSourceStack().withPermission(2), command);
+                player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER), command);
     }
 
     private enum Outcome {
