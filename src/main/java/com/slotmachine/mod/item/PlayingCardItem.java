@@ -140,18 +140,18 @@ public class PlayingCardItem extends Item {
         for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
             String tag = "slotmachine_card_modifier_" + index;
             String modifierId = "slotmachine:card_" + index;
-            String command = "execute unless entity @s[tag=" + tag + "] run attribute @s " +
-                    "minecraft:movement_speed modifier add " + modifierId + " " +
-                    String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value";
-            if (run(server, player, command) > 0) {
+            if (!player.getTags().contains(tag)) {
+                run(server, player, "attribute @s minecraft:movement_speed modifier add " +
+                        modifierId + " " +
+                        String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value");
                 player.addTag(tag);
                 return;
             }
         }
     }
 
-    private static int run(MinecraftServer server, ServerPlayer player, String command) {
-        return server.getCommands().performPrefixedCommand(
+    private static void run(MinecraftServer server, ServerPlayer player, String command) {
+        server.getCommands().performPrefixedCommand(
                 player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER), command);
     }
 
