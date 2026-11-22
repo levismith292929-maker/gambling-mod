@@ -22,6 +22,8 @@ public final class PrinterCraftingRecipes {
             new RecipeSerializer<>(MapCodec.unit(new EmptyPrinterRecipe()), StreamCodec.unit(new EmptyPrinterRecipe()));
     public static final RecipeSerializer<DeckRecipe> DECK_SERIALIZER =
             new RecipeSerializer<>(MapCodec.unit(new DeckRecipe()), StreamCodec.unit(new DeckRecipe()));
+    public static final RecipeSerializer<LifeForceRecipe> LIFE_FORCE_SERIALIZER =
+            new RecipeSerializer<>(MapCodec.unit(new LifeForceRecipe()), StreamCodec.unit(new LifeForceRecipe()));
 
     private PrinterCraftingRecipes() {}
 
@@ -32,6 +34,8 @@ public final class PrinterCraftingRecipes {
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "empty_printer"), EMPTY_PRINTER_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "deck"), DECK_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, "life_force"), LIFE_FORCE_SERIALIZER);
         SlotMachineMod.LOGGER.info("Registered ink tank and printer crafting recipes");
     }
 
@@ -107,6 +111,22 @@ public final class PrinterCraftingRecipes {
         }
         @Override public ItemStack assemble(CraftingInput input) { return new ItemStack(ModBlocks.DECK_ITEM); }
         @Override public RecipeSerializer<? extends CustomRecipe> getSerializer() { return DECK_SERIALIZER; }
+    }
+
+    public static class LifeForceRecipe extends CustomRecipe {
+        private static final String[] PATTERN = {"rrgrr", "rdgdr", "ggmgg", "rdgdr", "rrgrr"};
+        private static final String[][] INGREDIENTS = new String[128][];
+        static {
+            INGREDIENTS['r'] = new String[]{"minecraft:poppy"};
+            INGREDIENTS['g'] = new String[]{"minecraft:gold_nugget"};
+            INGREDIENTS['d'] = new String[]{"minecraft:diamond"};
+            INGREDIENTS['m'] = new String[]{"minecraft:milk_bucket"};
+        }
+        @Override public boolean matches(CraftingInput input, Level level) {
+            return matchesPattern(input, PATTERN, INGREDIENTS);
+        }
+        @Override public ItemStack assemble(CraftingInput input) { return new ItemStack(ModItems.LIFE_FORCE); }
+        @Override public RecipeSerializer<? extends CustomRecipe> getSerializer() { return LIFE_FORCE_SERIALIZER; }
     }
 
     public static class EmptyPrinterRecipe extends CustomRecipe {
