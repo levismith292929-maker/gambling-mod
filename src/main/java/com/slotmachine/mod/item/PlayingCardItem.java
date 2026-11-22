@@ -43,6 +43,13 @@ public class PlayingCardItem extends Item {
         boolean joker = cardIndex == 52 || cardIndex == 53;
         boolean royal = rank >= 9 && rank <= 11;
 
+        MinecraftServer server = level.getServer();
+        if (server != null && joker) {
+            // Card index 53 is the black Joker; index 52 is the red Joker.
+            String jokerSound = cardIndex == 53 ? "slotmachine:birdly1" : "slotmachine:birdly2";
+            run(server, serverPlayer, "playsound " + jokerSound + " master @s ~ ~ ~ 1 1");
+        }
+
         Outcome outcome;
         if (joker) {
             int roll = player.getRandom().nextInt(5);
@@ -55,7 +62,6 @@ public class PlayingCardItem extends Item {
             outcome = roll == 0 ? Outcome.BAD : roll == 1 ? Outcome.GOOD : Outcome.NEUTRAL;
         }
 
-        MinecraftServer server = level.getServer();
         if (server != null) {
             if (outcome == Outcome.GOOD) {
                 applyGood(server, serverPlayer);
