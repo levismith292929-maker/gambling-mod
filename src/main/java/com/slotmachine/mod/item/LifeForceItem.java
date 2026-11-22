@@ -2,12 +2,16 @@ package com.slotmachine.mod.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,18 +40,24 @@ public class LifeForceItem extends Item {
                 "execute if entity @s[tag=slotmachine_card_effect_slowness] run effect clear @s minecraft:slowness");
         serverPlayer.removeTag("slotmachine_card_effect_slowness");
 
-        for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
-            String tag = "slotmachine_card_modifier_" + index;
-            String modifierId = "slotmachine:card_" + index;
-            run(server, serverPlayer, "execute if entity @s[tag=" + tag +
-                    "] run attribute @s minecraft:movement_speed modifier remove " + modifierId);
-            serverPlayer.removeTag(tag);
+        AttributeInstance movementSpeed = serverPlayer.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movementSpeed != null) {
+            for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
+                movementSpeed.removeModifier(ResourceLocation.fromNamespaceAndPath(
+                        "slotmachine", "card_" + index));
+                serverPlayer.removeTag("slotmachine_card_modifier_" + index);
+            }
         }
 
-        String penaltyId = "slotmachine:life_force_" +
-                java.util.UUID.randomUUID().toString().replace("-", "");
-        run(server, serverPlayer, "attribute @s minecraft:max_health modifier add " +
-                penaltyId + " -0.5 add_value");
+        AttributeInstance maxHealth = serverPlayer.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealth != null) {
+            String penaltyId = "life_force_" +
+                    java.util.UUID.randomUUID().toString().replace("-", "");
+            maxHealth.addPermanentModifier(new AttributeModifier(
+                    ResourceLocation.fromNamespaceAndPath("slotmachine", penaltyId),
+                    -1.0,
+                    AttributeModifier.Operation.ADD_VALUE));
+        }
 
         ItemStack stack = serverPlayer.getItemInHand(hand);
         if (stack.getCount() == 1) {
@@ -62,7 +72,7 @@ public class LifeForceItem extends Item {
         }
 
         serverPlayer.sendSystemMessage(
-                Component.literal("Card effects removed. Maximum health reduced by 0.5 HP."), true);
+                Component.literal("Card effects removed. Maximum health reduced by half a heart."), true);
         return InteractionResult.SUCCESS;
     }
 
