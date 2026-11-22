@@ -109,7 +109,6 @@ public class PlayingCardItem extends Item {
 
     /** Selects only from eligible item stacks actually present in the player's inventory. */
     private static void clearOneOwnedItem(ServerPlayer player) {
-        Items[] ignored = new Items[0]; // Keeps this method's choices explicitly item-based below.
         net.minecraft.world.item.Item[] choices = {
                 Items.ROTTEN_FLESH, Items.DIRT, Items.COBBLESTONE, Items.GRAVEL, Items.SPIDER_EYE
         };
