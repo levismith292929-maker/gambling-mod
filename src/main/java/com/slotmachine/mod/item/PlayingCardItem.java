@@ -47,7 +47,7 @@ public class PlayingCardItem extends Item {
         } else if (royal) {
             outcome = roll < 3 ? Outcome.NEUTRAL : roll == 3 ? Outcome.GOOD : Outcome.BAD;
         } else {
-            int evenRoll = level.random.nextInt(3);
+            int evenRoll = player.getRandom().nextInt(3);
             outcome = evenRoll == 0 ? Outcome.BAD : evenRoll == 1 ? Outcome.GOOD : Outcome.NEUTRAL;
         }
 
@@ -71,13 +71,13 @@ public class PlayingCardItem extends Item {
     }
 
     private static void applyGood(MinecraftServer server, Player player, Level level) {
-        int choice = level.random.nextInt(3);
+        int choice = player.getRandom().nextInt(3);
         if (choice == 0) {
-            int amount = 1 + level.random.nextInt(5);
+            int amount = 1 + player.getRandom().nextInt(5);
             run(server, player, "give @s minecraft:emerald " + amount);
         } else if (choice == 1) {
-            int seconds = 15 + level.random.nextInt(31);
-            int amplifier = level.random.nextInt(2);
+            int seconds = 15 + player.getRandom().nextInt(31);
+            int amplifier = player.getRandom().nextInt(2);
             run(server, player, "effect give @s minecraft:speed " + seconds + " " + amplifier + " true");
         } else {
             double amount = 0.05 + player.getRandom().nextDouble() * 0.25;
@@ -86,31 +86,31 @@ public class PlayingCardItem extends Item {
     }
 
     private static void applyBad(MinecraftServer server, Player player, Level level) {
-        switch (level.random.nextInt(4)) {
+        switch (player.getRandom().nextInt(4)) {
             case 0 -> {
-                int seconds = 10 + level.random.nextInt(21);
-                int amplifier = level.random.nextInt(2);
+                int seconds = 10 + player.getRandom().nextInt(21);
+                int amplifier = player.getRandom().nextInt(2);
                 run(server, player, "effect give @s minecraft:slowness " + seconds + " " + amplifier + " true");
             }
             case 1 -> {
-                String item = CLEAR_ITEMS[level.random.nextInt(CLEAR_ITEMS.length)];
+                String item = CLEAR_ITEMS[player.getRandom().nextInt(CLEAR_ITEMS.length)];
                 run(server, player, "clear @s " + item + " 1");
             }
             case 2 -> {
-                int damage = 1 + level.random.nextInt(6);
+                int damage = 1 + player.getRandom().nextInt(6);
                 run(server, player, "damage @s " + damage + " minecraft:generic");
             }
             default -> {
-                double amount = -(0.05 + level.random.nextDouble() * 0.25);
+                double amount = -(0.05 + player.getRandom().nextDouble() * 0.25);
                 runAttribute(server, player, amount);
             }
         }
     }
 
     private static void applyNeutral(MinecraftServer server, Player player, Level level) {
-        String sound = NEUTRAL_SOUNDS[level.random.nextInt(NEUTRAL_SOUNDS.length)];
+        String sound = NEUTRAL_SOUNDS[player.getRandom().nextInt(NEUTRAL_SOUNDS.length)];
         run(server, player, "playsound " + sound + " master @s ~ ~ ~ 1 " +
-                (0.8 + level.random.nextDouble() * 0.4));
+                (0.8 + player.getRandom().nextDouble() * 0.4));
     }
 
     private static void runAttribute(MinecraftServer server, Player player, double amount) {
