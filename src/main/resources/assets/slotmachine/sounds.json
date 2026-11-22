@@ -26,7 +26,7 @@
   "birdly1": {
     "sounds": [
       {
-        "name": "minecraft:block/note_block/pling",
+        "name": "minecraft:block.note_block.pling",
         "volume": 1.0
       }
     ]
@@ -34,7 +34,7 @@
   "birdly2": {
     "sounds": [
       {
-        "name": "minecraft:block/note_block/pling",
+        "name": "minecraft:block.note_block.pling",
         "volume": 1.0
       }
     ]
