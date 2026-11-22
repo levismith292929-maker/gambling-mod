@@ -25,12 +25,19 @@ public class ModItems {
 
     public static final Item BLANK_CARD = register("blank_card");
     public static final Item INK_TANK = register("ink_tank");
-    public static final Item PLAYING_CARD = register("playing_card");
+    public static final Item PLAYING_CARD = registerUnstackable("playing_card");
 
     private static Item register(String name) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
                 Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
         return Registry.register(BuiltInRegistries.ITEM, key, new Item(new Item.Properties().setId(key)));
+    }
+
+    private static Item registerUnstackable(String name) {
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(SlotMachineMod.MOD_ID, name));
+        return Registry.register(BuiltInRegistries.ITEM, key,
+                new Item(new Item.Properties().setId(key).stacksTo(1)));
     }
 
     private static Item registerLuckCharm(String name, int luck, int tier) {
