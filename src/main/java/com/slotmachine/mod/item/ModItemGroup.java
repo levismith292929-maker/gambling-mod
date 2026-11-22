@@ -39,6 +39,7 @@ public class ModItemGroup {
                 output.accept(ModItems.BLANK_CARD);
                 output.accept(ModItems.INK_TANK);
                 output.accept(ModItems.PLAYING_CARD);
+                output.accept(ModItems.LIFE_FORCE);
             }).build();
 
     public static void registerItemGroups() {
