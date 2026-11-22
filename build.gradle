@@ -115,6 +115,10 @@ tasks.register("generatePlayingCardAssets") {
 
 sourceSets.main.resources.srcDir(generatedCardResources)
 
+tasks.named("sourcesJar") {
+    dependsOn tasks.named("generatePlayingCardAssets")
+}
+
 processResources {
     dependsOn tasks.named("generatePlayingCardAssets")
     inputs.property "version", project.version
