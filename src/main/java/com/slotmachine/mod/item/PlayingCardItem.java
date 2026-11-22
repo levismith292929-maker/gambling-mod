@@ -140,7 +140,7 @@ public class PlayingCardItem extends Item {
         for (int index = 0; index < MAX_TRACKED_ATTRIBUTE_EFFECTS; index++) {
             String tag = "slotmachine_card_modifier_" + index;
             String modifierId = "slotmachine:card_" + index;
-            if (!player.getTags().contains(tag)) {
+            if (!player.entityTags().contains(tag)) {
                 run(server, player, "attribute @s minecraft:movement_speed modifier add " +
                         modifierId + " " +
                         String.format(java.util.Locale.ROOT, "%.5f", amount) + " add_value");
