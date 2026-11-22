@@ -131,6 +131,36 @@ tasks.register("generatePlayingCardAssets") {
         }
         javax.imageio.ImageIO.write(paperImage, "png", blankTexture)
 
+        // Build the Life Force icon from the vanilla milk bucket, recoloring
+        // the bright milk pixels red while preserving the silver bucket.
+        def lifeForceTexture = new File(outputRoot, "assets/slotmachine/textures/item/life_force.png")
+        lifeForceTexture.parentFile.mkdirs()
+        def milkUrl = new URL("https://project-crafting.github.io/minecraft-auto-updated-textures-api/textures/item/milk_bucket.png")
+        def milkConnection = milkUrl.openConnection()
+        milkConnection.setConnectTimeout(20000)
+        milkConnection.setReadTimeout(60000)
+        def milkImage = javax.imageio.ImageIO.read(milkConnection.getInputStream())
+        if (milkImage == null) {
+            throw new GradleException("Could not read the vanilla Minecraft milk bucket texture.")
+        }
+        for (int y = 1; y < Math.min(8, milkImage.height); y++) {
+            for (int x = 4; x < Math.min(12, milkImage.width); x++) {
+                int argb = milkImage.getRGB(x, y)
+                int alpha = (argb >>> 24) & 255
+                int red = (argb >>> 16) & 255
+                int green = (argb >>> 8) & 255
+                int blue = argb & 255
+                if (alpha > 0 && red > 150 && green > 150 && blue > 150) {
+                    int shade = Math.max(0, Math.min(255, (red + green + blue) / 3))
+                    int tintedGreen = Math.max(0, (int) (shade * 0.12))
+                    int tintedBlue = Math.max(0, (int) (shade * 0.20))
+                    milkImage.setRGB(x, y, (alpha << 24) | (shade << 16) | (tintedGreen << 8) | tintedBlue)
+                }
+            }
+        }
+        javax.imageio.ImageIO.write(milkImage, "png", lifeForceTexture)
+
+
     }
 }
 
