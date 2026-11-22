@@ -9,6 +9,8 @@ public final class ModSounds {
     public static final SoundEvent SPIN_START = register("spin_start");
     public static final SoundEvent REEL_TICK = register("reel_tick");
     public static final SoundEvent REEL_STOP = register("reel_stop");
+    public static final SoundEvent BIRDLY1 = register("birdly1");
+    public static final SoundEvent BIRDLY2 = register("birdly2");
 
     private ModSounds() {
     }
