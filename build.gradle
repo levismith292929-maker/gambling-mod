@@ -56,9 +56,9 @@ tasks.register("generatePlayingCardAssets") {
         try {
             java.util.zip.ZipEntry entry
             while ((entry = zip.nextEntry) != null) {
-                def path = entry.name.replace('\\\\', '/')
-                def standardMatcher = path =~ /.*png cards\\/card fronts\\/(clubs|diamonds|hearts|spades)\\/([^\\/]+)\\.png$/
-                def jokerMatcher = path =~ /.*png cards\\/card fronts\\/jokers\\/(red|black) joker\\.png$/
+                def path = entry.name
+                def standardMatcher = java.util.regex.Pattern.compile(".*png cards/card fronts/(clubs|diamonds|hearts|spades)/([^/]+)\\.png$").matcher(path)
+                def jokerMatcher = java.util.regex.Pattern.compile(".*png cards/card fronts/jokers/(red|black) joker\\.png$").matcher(path)
 
                 if (!entry.directory && (standardMatcher.matches() || jokerMatcher.matches())) {
                     def cardName
