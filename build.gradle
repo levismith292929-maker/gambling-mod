@@ -151,7 +151,8 @@ tasks.register("generatePlayingCardAssets") {
                 int green = (argb >>> 8) & 255
                 int blue = argb & 255
                 if (alpha > 0 && red > 150 && green > 150 && blue > 150) {
-                    int shade = Math.max(0, Math.min(255, (red + green + blue) / 3))
+                    int average = (int) ((red + green + blue) / 3)
+                    int shade = Math.max(0, Math.min(255, average))
                     int tintedGreen = Math.max(0, (int) (shade * 0.12))
                     int tintedBlue = Math.max(0, (int) (shade * 0.20))
                     milkImage.setRGB(x, y, (alpha << 24) | (shade << 16) | (tintedGreen << 8) | tintedBlue)
