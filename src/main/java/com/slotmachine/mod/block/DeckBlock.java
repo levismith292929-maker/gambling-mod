@@ -4,6 +4,7 @@ import com.slotmachine.mod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,7 +24,10 @@ public class DeckBlock extends Block {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         ItemStack cards = new ItemStack(ModItems.PLAYING_CARD, 52);
-        player.getInventory().placeItemBackInInventory(cards);
+        if (!player.getInventory().add(cards)) {
+            level.addFreshEntity(new ItemEntity(level, player.getX(), player.getY() + 0.5,
+                    player.getZ(), cards));
+        }
 
         // Remove the placed deck without dropping another deck item.
         level.setBlock(pos, Blocks.AIR.defaultBlockState(),
