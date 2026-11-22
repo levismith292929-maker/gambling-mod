@@ -57,19 +57,22 @@ tasks.register("generatePlayingCardAssets") {
             java.util.zip.ZipEntry entry
             while ((entry = zip.nextEntry) != null) {
                 def path = entry.name
-                def standardMatcher = java.util.regex.Pattern.compile(".*png cards/card fronts/(clubs|diamonds|hearts|spades)/([^/]+)\\.png$").matcher(path)
-                def jokerMatcher = java.util.regex.Pattern.compile(".*png cards/card fronts/jokers/(red|black) joker\\.png$").matcher(path)
-
-                if (!entry.directory && (standardMatcher.matches() || jokerMatcher.matches())) {
-                    def cardName
-                    if (jokerMatcher.matches()) {
-                        cardName = "joker_" + jokerMatcher.group(1)
-                        jokerCount++
-                    } else {
-                        cardName = standardMatcher.group(2).toLowerCase(Locale.ROOT).replace(' ', '_')
+                def cardName = null
+                if (!entry.directory && path.contains("png cards/card fronts/") && path.endsWith(".png")) {
+                    def prefix = "png cards/card fronts/"
+                    def relative = path.substring(path.indexOf(prefix) + prefix.length())
+                    def parts = relative.split("/")
+                    if (parts.length == 2 && ["clubs", "diamonds", "hearts", "spades"].contains(parts[0])) {
+                        cardName = parts[1].substring(0, parts[1].length() - 4).toLowerCase(Locale.ROOT).replace(' ', '_')
                         standardCardCount++
+                    } else if (parts.length == 2 && parts[0] == "jokers" &&
+                            (parts[1] == "red joker.png" || parts[1] == "black joker.png")) {
+                        cardName = parts[1].startsWith("red") ? "joker_red" : "joker_black"
+                        jokerCount++
                     }
+                }
 
+                if (cardName != null) {
                     def textureFile = new File(outputRoot, "assets/slotmachine/textures/item/cards/${cardName}.png")
                     textureFile.parentFile.mkdirs()
                     textureFile.withOutputStream { out ->
